@@ -1,6 +1,6 @@
 {
-  "domain": "knx",
-  "name": "KNX",
+  "domain": "knx2",
+  "name": "KNX2",
   "after_dependencies": ["panel_custom"],
   "codeowners": ["@Julius2342", "@farmio", "@marvin-w"],
   "config_flow": true,
