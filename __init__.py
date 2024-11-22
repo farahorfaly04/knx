@@ -328,7 +328,7 @@ class KNX2Module:
     def connection_config(self) -> ConnectionConfig:
         """Return the connection_config."""
         _conn_type: str = self.entry.data[CONF_KNX2_CONNECTION_TYPE]
-        _knx2keys_file: str | None = (
+        _knxkeys_file: str | None = (
             self.hass.config.path(
                 STORAGE_DIR,
                 self.entry.data[CONF_KNX2_KNX2KEY_FILENAME],
@@ -345,8 +345,8 @@ class KNX2Module:
                 local_ip=self.entry.data.get(CONF_KNX2_LOCAL_IP),
                 auto_reconnect=True,
                 secure_config=SecureConfig(
-                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
-                    knx2keys_file_path=_knx2keys_file,
+                    knxkeys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knxkeys_file_path=_knxkeys_file,
                 ),
                 threaded=True,
             )
@@ -359,8 +359,8 @@ class KNX2Module:
                 route_back=self.entry.data.get(CONF_KNX2_ROUTE_BACK, False),
                 auto_reconnect=True,
                 secure_config=SecureConfig(
-                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
-                    knx2keys_file_path=_knx2keys_file,
+                    knxkeys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knxkeys_file_path=_knxkeys_file,
                 ),
                 threaded=True,
             )
@@ -371,8 +371,8 @@ class KNX2Module:
                 gateway_port=self.entry.data[CONF_PORT],
                 auto_reconnect=True,
                 secure_config=SecureConfig(
-                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
-                    knx2keys_file_path=_knx2keys_file,
+                    knxkeys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knxkeys_file_path=_knxkeys_file,
                 ),
                 threaded=True,
             )
@@ -387,8 +387,8 @@ class KNX2Module:
                     device_authentication_password=self.entry.data.get(
                         CONF_KNX2_SECURE_DEVICE_AUTHENTICATION
                     ),
-                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
-                    knx2keys_file_path=_knx2keys_file,
+                    knxkeys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knxkeys_file_path=_knxkeys_file,
                 ),
                 auto_reconnect=True,
                 threaded=True,
@@ -405,8 +405,8 @@ class KNX2Module:
                     latency_ms=self.entry.data.get(
                         CONF_KNX2_ROUTING_SYNC_LATENCY_TOLERANCE
                     ),
-                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
-                    knx2keys_file_path=_knx2keys_file,
+                    knxkeys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knxkeys_file_path=_knxkeys_file,
                 ),
                 auto_reconnect=True,
                 threaded=True,
@@ -414,8 +414,8 @@ class KNX2Module:
         return ConnectionConfig(
             auto_reconnect=True,
             secure_config=SecureConfig(
-                knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
-                knx2keys_file_path=_knx2keys_file,
+                knxkeys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                knxkeys_file_path=_knxkeys_file,
             ),
             threaded=True,
         )

@@ -63,7 +63,7 @@ from .const import (
     TELEGRAM_LOG_MAX,
     KNX2ConfigEntryData,
 )
-from .storage.keyring import DEFAULT_KNX2_KEYRING_FILENAME, save_uploaded_knx2keys_file
+from .storage.keyring import DEFAULT_KNX2_KEYRING_FILENAME, save_uploaded_knxkeys_file
 from .validation import ia_validator, ip_v4_validator
 
 CONF_KNX2_GATEWAY: Final = "gateway"
@@ -500,7 +500,7 @@ class KNX2CommonFlow(ABC, ConfigEntryBaseFlow):
         if user_input is not None:
             password = user_input[CONF_KNX2_KNX2KEY_PASSWORD]
             try:
-                self._keyring = await save_uploaded_knx2keys_file(
+                self._keyring = await save_uploaded_knxkeys_file(
                     self.hass,
                     uploaded_file_id=user_input[CONF_KEYRING_FILE],
                     password=password,
@@ -511,7 +511,7 @@ class KNX2CommonFlow(ABC, ConfigEntryBaseFlow):
             if not errors and self._keyring:
                 self.new_entry_data |= KNX2ConfigEntryData(
                     knx2keys_filename=f"{DOMAIN}/{DEFAULT_KNX2_KEYRING_FILENAME}",
-                    knx2keys_password=password,
+                    knxkeys_password=password,
                     backbone_key=None,
                     sync_latency_tolerance=None,
                 )

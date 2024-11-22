@@ -60,7 +60,7 @@ TELEGRAM_LOG_MAX: Final = 25000  # ~10 MB or ~25 hours of reasonable bus load
 ##
 CONST_KNX2_STORAGE_KEY: Final = "knx2/"
 CONF_KNX2_KNX2KEY_FILENAME: Final = "knx2keys_filename"
-CONF_KNX2_KNX2KEY_PASSWORD: Final = "knx2keys_password"
+CONF_KNX2_KNX2KEY_PASSWORD: Final = "knxkeys_password"
 
 CONF_KNX2_SECURE_USER_ID: Final = "user_id"
 CONF_KNX2_SECURE_USER_PASSWORD: Final = "user_password"
@@ -110,7 +110,7 @@ class KNX2ConfigEntryData(TypedDict, total=False):
     user_password: str | None  # not required
     device_authentication: str | None  # not required
     knx2keys_filename: str  # not required
-    knx2keys_password: str  # not required
+    knxkeys_password: str  # not required
     backbone_key: str | None  # not required
     sync_latency_tolerance: int | None  # not required
     # OptionsFlow only

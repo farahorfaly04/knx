@@ -53,10 +53,10 @@
         "description": "Please select a `.knx2keys` file to import.",
         "data": {
           "knx2keys_file": "Keyring file",
-          "knx2keys_password": "The password to decrypt the `.knxkeys` file"
+          "knxkeys_password": "The password to decrypt the `.knxkeys` file"
         },
         "data_description": {
-          "knx2keys_password": "This was set when exporting the file from ETS."
+          "knxkeys_password": "This was set when exporting the file from ETS."
         }
       },
       "knx2keys_tunnel_select": {
@@ -197,10 +197,10 @@
         "description": "[%key:component::knx2::config::step::secure_knx2keys::description%]",
         "data": {
           "knx2keys_file": "[%key:component::knx2::config::step::secure_knx2keys::data::knx2keys_file%]",
-          "knx2keys_password": "[%key:component::knx2::config::step::secure_knx2keys::data::knx2keys_password%]"
+          "knxkeys_password": "[%key:component::knx2::config::step::secure_knx2keys::data::knxkeys_password%]"
         },
         "data_description": {
-          "knx2keys_password": "[%key:component::knx2::config::step::secure_knx2keys::data_description::knx2keys_password%]"
+          "knxkeys_password": "[%key:component::knx2::config::step::secure_knx2keys::data_description::knxkeys_password%]"
         }
       },
       "knx2keys_tunnel_select": {

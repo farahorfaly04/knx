@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 DEFAULT_KNX2_KEYRING_FILENAME: Final = "keyring.knx2keys"
 
 
-async def save_uploaded_knx2keys_file(
+async def save_uploaded_knxkeys_file(
     hass: HomeAssistant, uploaded_file_id: str, password: str
 ) -> Keyring:
     """Validate the uploaded file and move it to the storage directory.
