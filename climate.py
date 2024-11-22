@@ -11,10 +11,7 @@ from xknx.devices import (
     Device as XknxDevice,
 )
 
-#from xknx.devices.fan import FanSpeedMode
-from xknx.devices import fan
-print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-print(dir(fan))
+from xknx.devices.fan import FanSpeedMode
 from xknx.dpt.dpt_20 import HVACControllerMode, HVACOperationMode
 
 from homeassistant import config_entries

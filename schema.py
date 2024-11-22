@@ -7,7 +7,8 @@ from collections import OrderedDict
 from typing import ClassVar, Final
 
 import voluptuous as vol
-from xknx.devices.climate import FanSpeedMode, SetpointShiftMode
+from xknx.devices.climate import SetpointShiftMode
+from xknx.devices.fan import FanSpeedMode
 from xknx.dpt import DPTBase, DPTNumeric
 from xknx.dpt.dpt_20 import HVACControllerMode, HVACOperationMode
 from xknx.exceptions import ConversionError, CouldNotParseTelegram
