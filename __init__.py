@@ -67,7 +67,7 @@ from .const import (
     TELEGRAM_LOG_DEFAULT,
 )
 from .device import KNX2InterfaceDevice
-from .expose import KNX2ExposeSensor, KNX2ExposeTime, create_knx_exposure
+from .expose import KNX2ExposeSensor, KNX2ExposeTime, create_knx2_exposure
 from .project import STORAGE_KEY as PROJECT_STORAGE_KEY, KNX2Project
 from .schema import (
     BinarySensorSchema,
@@ -178,7 +178,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if CONF_KNX2_EXPOSE in config:
         for expose_config in config[CONF_KNX2_EXPOSE]:
             knx2_module.exposures.append(
-                create_knx_exposure(hass, knx2_module.xknx, expose_config)
+                create_knx2_exposure(hass, knx2_module.xknx, expose_config)
             )
     configured_platforms_yaml = {
         platform for platform in SUPPORTED_PLATFORMS_YAML if platform in config
