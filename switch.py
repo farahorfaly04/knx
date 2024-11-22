@@ -25,7 +25,7 @@ from homeassistant.helpers.entity_platform import (
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
+from . import KNX2Module
 from .const import (
     CONF_INVERT,
     CONF_RESPOND_TO_READ,
@@ -110,7 +110,7 @@ class Knx2YamlSwitch(_Knx2Switch, Knx2YamlEntity):
 
     _device: XknxSwitch
 
-    def __init__(self, knx2_module: KNXModule, config: ConfigType) -> None:
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
         """Initialize of KNX switch."""
         super().__init__(
             knx2_module=knx2_module,
@@ -134,7 +134,7 @@ class Knx2UiSwitch(_Knx2Switch, Knx2UiEntity):
     _device: XknxSwitch
 
     def __init__(
-        self, knx2_module: KNXModule, unique_id: str, config: dict[str, Any]
+        self, knx2_module: KNX2Module, unique_id: str, config: dict[str, Any]
     ) -> None:
         """Initialize KNX switch."""
         super().__init__(
