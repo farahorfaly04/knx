@@ -1,4 +1,4 @@
-"""KNX entity configuration store."""
+"""KNX2 entity configuration store."""
 
 from abc import ABC, abstractmethod
 import logging
@@ -22,11 +22,11 @@ STORAGE_KEY: Final = f"{DOMAIN}/config_store.json"
 type KNX2PlatformStoreModel = dict[str, dict[str, Any]]  # unique_id: configuration
 type KNX2EntityStoreModel = dict[
     str, KNX2PlatformStoreModel
-]  # platform: KNXPlatformStoreModel
+]  # platform: KNX2PlatformStoreModel
 
 
 class KNX2ConfigStoreModel(TypedDict):
-    """Represent KNX configuration store data."""
+    """Represent KNX2 configuration store data."""
 
     entities: KNX2EntityStoreModel
 
@@ -45,8 +45,8 @@ class PlatformControllerBase(ABC):
         """Update an existing entities configuration."""
 
 
-class KNXConfigStore:
-    """Manage KNX config store data."""
+class KNX2ConfigStore:
+    """Manage KNX2 config store data."""
 
     def __init__(
         self,
@@ -56,16 +56,16 @@ class KNXConfigStore:
         """Initialize config store."""
         self.hass = hass
         self.config_entry = config_entry
-        self._store = Store[KNXConfigStoreModel](hass, STORAGE_VERSION, STORAGE_KEY)
-        self.data = KNXConfigStoreModel(entities={})
+        self._store = Store[KNX2ConfigStoreModel](hass, STORAGE_VERSION, STORAGE_KEY)
+        self.data = KNX2ConfigStoreModel(entities={})
         self._platform_controllers: dict[Platform, PlatformControllerBase] = {}
 
     async def load_data(self) -> None:
         """Load config store data from storage."""
         if data := await self._store.async_load():
-            self.data = KNXConfigStoreModel(**data)
+            self.data = KNX2ConfigStoreModel(**data)
             _LOGGER.debug(
-                "Loaded KNX config data from storage. %s entity platforms",
+                "Loaded KNX2 config data from storage. %s entity platforms",
                 len(self.data["entities"]),
             )
 
@@ -91,7 +91,7 @@ class KNXConfigStore:
 
     @callback
     def get_entity_config(self, entity_id: str) -> dict[str, Any]:
-        """Return KNX entity configuration."""
+        """Return KNX2 entity configuration."""
         entity_registry = er.async_get(self.hass)
         if (entry := entity_registry.async_get(entity_id)) is None:
             raise ConfigStoreException(f"Entity not found: {entity_id}")
@@ -154,4 +154,4 @@ class KNXConfigStore:
 
 
 class ConfigStoreException(Exception):
-    """KNX config store exception."""
+    """KNX2 config store exception."""
