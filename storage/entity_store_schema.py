@@ -48,7 +48,7 @@ from .const import (
     CONF_GA_WHITE_SWITCH,
     CONF_GA_WRITE,
 )
-from .knx2_selector import GASelector
+from .knx_selector import GASelector
 
 BASE_ENTITY_SCHEMA = vol.All(
     {
