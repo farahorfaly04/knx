@@ -10,7 +10,10 @@ from xknx.devices import (
     ClimateMode as XknxClimateMode,
     Device as XknxDevice,
 )
-from xknx.devices.fan import FanSpeedMode
+
+#from xknx.devices.fan import FanSpeedMode
+from xknx.devices import fan
+print(dir(fan))
 from xknx.dpt.dpt_20 import HVACControllerMode, HVACOperationMode
 
 from homeassistant import config_entries
