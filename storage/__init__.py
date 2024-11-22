@@ -1,1 +1,1 @@
-"""Helpers for KNX."""
+"""Helpers for KNX2."""

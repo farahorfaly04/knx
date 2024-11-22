@@ -1,4 +1,4 @@
-"""Support for KNX/IP covers."""
+"""Support for KNX2/IP covers."""
 
 from __future__ import annotations
 
@@ -25,8 +25,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
-from .const import KNX_MODULE_KEY
+from . import KNX2Module
+from .const import KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 from .schema import CoverSchema
 
@@ -36,24 +36,24 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up cover(s) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.COVER]
+    """Set up cover(s) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.COVER]
 
-    async_add_entities(KNXCover(knx_module, entity_config) for entity_config in config)
+    async_add_entities(KNX2Cover(knx2_module, entity_config) for entity_config in config)
 
 
-class KNXCover(KnxYamlEntity, CoverEntity):
-    """Representation of a KNX cover."""
+class KNX2Cover(KnxYamlEntity, CoverEntity):
+    """Representation of a KNX2 cover."""
 
     _device: XknxCover
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
         """Initialize the cover."""
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             device=XknxCover(
-                xknx=knx_module.xknx,
+                xknx=knx2_module.xknx,
                 name=config[CONF_NAME],
                 group_address_long=config.get(CoverSchema.CONF_MOVE_LONG_ADDRESS),
                 group_address_short=config.get(CoverSchema.CONF_MOVE_SHORT_ADDRESS),
@@ -111,7 +111,7 @@ class KNXCover(KnxYamlEntity, CoverEntity):
 
         None is unknown, 0 is closed, 100 is fully open.
         """
-        # In KNX 0 is open, 100 is closed.
+        # In KNX2 0 is open, 100 is closed.
         if (pos := self._device.current_position()) is not None:
             return 100 - pos
         return None
@@ -144,8 +144,8 @@ class KNXCover(KnxYamlEntity, CoverEntity):
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
         """Move the cover to a specific position."""
-        knx_position = 100 - kwargs[ATTR_POSITION]
-        await self._device.set_position(knx_position)
+        knx2_position = 100 - kwargs[ATTR_POSITION]
+        await self._device.set_position(knx2_position)
 
     async def async_stop_cover(self, **kwargs: Any) -> None:
         """Stop the cover."""
@@ -160,8 +160,8 @@ class KNXCover(KnxYamlEntity, CoverEntity):
 
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
         """Move the cover tilt to a specific position."""
-        knx_tilt_position = 100 - kwargs[ATTR_TILT_POSITION]
-        await self._device.set_angle(knx_tilt_position)
+        knx2_tilt_position = 100 - kwargs[ATTR_TILT_POSITION]
+        await self._device.set_angle(knx2_tilt_position)
 
     async def async_open_cover_tilt(self, **kwargs: Any) -> None:
         """Open the cover tilt."""

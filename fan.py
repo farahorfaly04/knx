@@ -1,4 +1,4 @@
-"""Support for KNX/IP fans."""
+"""Support for KNX2/IP fans."""
 
 from __future__ import annotations
 
@@ -19,8 +19,8 @@ from homeassistant.util.percentage import (
 )
 from homeassistant.util.scaling import int_states_in_range
 
-from . import KNXModule
-from .const import KNX_ADDRESS, KNX_MODULE_KEY
+from . import KNX2Module
+from .const import KNX2_ADDRESS, KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 from .schema import FanSchema
 
@@ -32,28 +32,28 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up fan(s) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.FAN]
+    """Set up fan(s) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.FAN]
 
-    async_add_entities(KNXFan(knx_module, entity_config) for entity_config in config)
+    async_add_entities(KNX2Fan(knx2_module, entity_config) for entity_config in config)
 
 
-class KNXFan(KnxYamlEntity, FanEntity):
-    """Representation of a KNX fan."""
+class KNX2Fan(KnxYamlEntity, FanEntity):
+    """Representation of a KNX2 fan."""
 
     _device: XknxFan
     _enable_turn_on_off_backwards_compatibility = False
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize of KNX fan."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize of KNX2 fan."""
         max_step = config.get(FanSchema.CONF_MAX_STEP)
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             device=XknxFan(
-                xknx=knx_module.xknx,
+                xknx=knx2_module.xknx,
                 name=config[CONF_NAME],
-                group_address_speed=config.get(KNX_ADDRESS),
+                group_address_speed=config.get(KNX2_ADDRESS),
                 group_address_speed_state=config.get(FanSchema.CONF_STATE_ADDRESS),
                 group_address_oscillation=config.get(
                     FanSchema.CONF_OSCILLATION_ADDRESS

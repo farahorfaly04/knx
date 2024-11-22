@@ -17,28 +17,28 @@ from homeassistant.helpers.typing import ConfigType, VolDictType
 
 from .const import DOMAIN
 from .schema import ga_validator
-from .telegrams import SIGNAL_KNX_TELEGRAM, TelegramDict, decode_telegram_payload
+from .telegrams import SIGNAL_KNX2_TELEGRAM, TelegramDict, decode_telegram_payload
 from .validation import dpt_base_type_validator
 
 TRIGGER_TELEGRAM: Final = "telegram"
 
 PLATFORM_TYPE_TRIGGER_TELEGRAM: Final = f"{DOMAIN}.{TRIGGER_TELEGRAM}"
 
-CONF_KNX_DESTINATION: Final = "destination"
-CONF_KNX_GROUP_VALUE_WRITE: Final = "group_value_write"
-CONF_KNX_GROUP_VALUE_READ: Final = "group_value_read"
-CONF_KNX_GROUP_VALUE_RESPONSE: Final = "group_value_response"
-CONF_KNX_INCOMING: Final = "incoming"
-CONF_KNX_OUTGOING: Final = "outgoing"
+CONF_KNX2_DESTINATION: Final = "destination"
+CONF_KNX2_GROUP_VALUE_WRITE: Final = "group_value_write"
+CONF_KNX2_GROUP_VALUE_READ: Final = "group_value_read"
+CONF_KNX2_GROUP_VALUE_RESPONSE: Final = "group_value_response"
+CONF_KNX2_INCOMING: Final = "incoming"
+CONF_KNX2_OUTGOING: Final = "outgoing"
 
 
 TELEGRAM_TRIGGER_SCHEMA: VolDictType = {
-    vol.Optional(CONF_KNX_DESTINATION): vol.All(cv.ensure_list, [ga_validator]),
-    vol.Optional(CONF_KNX_GROUP_VALUE_WRITE, default=True): cv.boolean,
-    vol.Optional(CONF_KNX_GROUP_VALUE_RESPONSE, default=True): cv.boolean,
-    vol.Optional(CONF_KNX_GROUP_VALUE_READ, default=True): cv.boolean,
-    vol.Optional(CONF_KNX_INCOMING, default=True): cv.boolean,
-    vol.Optional(CONF_KNX_OUTGOING, default=True): cv.boolean,
+    vol.Optional(CONF_KNX2_DESTINATION): vol.All(cv.ensure_list, [ga_validator]),
+    vol.Optional(CONF_KNX2_GROUP_VALUE_WRITE, default=True): cv.boolean,
+    vol.Optional(CONF_KNX2_GROUP_VALUE_RESPONSE, default=True): cv.boolean,
+    vol.Optional(CONF_KNX2_GROUP_VALUE_READ, default=True): cv.boolean,
+    vol.Optional(CONF_KNX2_INCOMING, default=True): cv.boolean,
+    vol.Optional(CONF_KNX2_OUTGOING, default=True): cv.boolean,
 }
 # TRIGGER_SCHEMA is exclusive to triggers, the above are used in device triggers too
 TRIGGER_SCHEMA = cv.TRIGGER_BASE_SCHEMA.extend(
@@ -57,14 +57,14 @@ async def async_attach_trigger(
     trigger_info: TriggerInfo,
 ) -> CALLBACK_TYPE:
     """Listen for telegrams based on configuration."""
-    _addresses: list[str] = config.get(CONF_KNX_DESTINATION, [])
+    _addresses: list[str] = config.get(CONF_KNX2_DESTINATION, [])
     dst_addresses: list[DeviceGroupAddress] = [
         parse_device_group_address(address) for address in _addresses
     ]
     _transcoder = config.get(CONF_TYPE)
     trigger_transcoder = DPTBase.parse_transcoder(_transcoder) if _transcoder else None
 
-    job = HassJob(action, f"KNX trigger {trigger_info}")
+    job = HassJob(action, f"KNX2 trigger {trigger_info}")
     trigger_data = trigger_info["trigger_data"]
 
     @callback
@@ -74,19 +74,19 @@ async def async_attach_trigger(
         """Filter Telegram and call trigger action."""
         payload_apci = type(telegram.payload)
         if payload_apci is GroupValueWrite:
-            if config[CONF_KNX_GROUP_VALUE_WRITE] is False:
+            if config[CONF_KNX2_GROUP_VALUE_WRITE] is False:
                 return
         elif payload_apci is GroupValueResponse:
-            if config[CONF_KNX_GROUP_VALUE_RESPONSE] is False:
+            if config[CONF_KNX2_GROUP_VALUE_RESPONSE] is False:
                 return
         elif payload_apci is GroupValueRead:
-            if config[CONF_KNX_GROUP_VALUE_READ] is False:
+            if config[CONF_KNX2_GROUP_VALUE_READ] is False:
                 return
 
         if telegram.direction is TelegramDirection.INCOMING:
-            if config[CONF_KNX_INCOMING] is False:
+            if config[CONF_KNX2_INCOMING] is False:
                 return
-        elif config[CONF_KNX_OUTGOING] is False:
+        elif config[CONF_KNX2_OUTGOING] is False:
             return
 
         if dst_addresses and telegram.destination_address not in dst_addresses:
@@ -110,6 +110,6 @@ async def async_attach_trigger(
 
     return async_dispatcher_connect(
         hass,
-        signal=SIGNAL_KNX_TELEGRAM,
+        signal=SIGNAL_KNX2_TELEGRAM,
         target=async_call_trigger_action,
     )

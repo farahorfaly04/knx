@@ -80,7 +80,7 @@ class KNXConfigStore:
     ) -> str | None:
         """Create a new entity."""
         platform_controller = self._platform_controllers[platform]
-        unique_id = f"knx_es_{ulid_now()}"
+        unique_id = f"knx2_es_{ulid_now()}"
         await platform_controller.create_entity(unique_id, data)
         # store data after entity was added to be sure config didn't raise exceptions
         self.data["entities"].setdefault(platform, {})[unique_id] = data

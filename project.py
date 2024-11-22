@@ -1,4 +1,4 @@
-"""Handle KNX project data."""
+"""Handle KNX2 project data."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 STORAGE_VERSION: Final = 1
-STORAGE_KEY: Final = f"{DOMAIN}/knx_project.json"
+STORAGE_KEY: Final = f"{DOMAIN}/knx2_project.json"
 
 
 @dataclass
@@ -58,8 +58,8 @@ def _create_group_address_info(ga_model: GroupAddressModel) -> GroupAddressInfo:
     )
 
 
-class KNXProject:
-    """Manage KNX project data."""
+class KNX2Project:
+    """Manage KNX2 project data."""
 
     loaded: bool
     devices: dict[str, Device]
@@ -104,7 +104,7 @@ class KNXProject:
             xknx.group_address_dpt.set(xknx_ga_dict)
 
             _LOGGER.debug(
-                "Loaded KNX project data with %s group addresses from storage",
+                "Loaded KNX2 project data with %s group addresses from storage",
                 len(self.group_addresses),
             )
             self.loaded = True
@@ -132,7 +132,7 @@ class KNXProject:
         await self._store.async_remove()
         self.initial_state()
 
-    async def get_knxproject(self) -> KNXProjectModel | None:
+    async def get_knx2project(self) -> KNXProjectModel | None:
         """Load the project file from local storage."""
         return await self._store.async_load()
 

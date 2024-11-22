@@ -1,4 +1,4 @@
-"""Exposures to KNX bus."""
+"""Exposures to KNX2 bus."""
 
 from __future__ import annotations
 
@@ -31,31 +31,31 @@ from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.template import Template
 from homeassistant.helpers.typing import ConfigType, StateType
 
-from .const import CONF_RESPOND_TO_READ, KNX_ADDRESS
+from .const import CONF_RESPOND_TO_READ, KNX2_ADDRESS
 from .schema import ExposeSchema
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @callback
-def create_knx_exposure(
+def create_knx2_exposure(
     hass: HomeAssistant, xknx: XKNX, config: ConfigType
-) -> KNXExposeSensor | KNXExposeTime:
+) -> KNX2ExposeSensor | KNX2ExposeTime:
     """Create exposures from config."""
 
-    expose_type = config[ExposeSchema.CONF_KNX_EXPOSE_TYPE]
+    expose_type = config[ExposeSchema.CONF_KNX2_EXPOSE_TYPE]
 
-    exposure: KNXExposeSensor | KNXExposeTime
+    exposure: KNX2ExposeSensor | KNX2ExposeTime
     if (
         isinstance(expose_type, str)
         and expose_type.lower() in ExposeSchema.EXPOSE_TIME_TYPES
     ):
-        exposure = KNXExposeTime(
+        exposure = KNX2ExposeTime(
             xknx=xknx,
             config=config,
         )
     else:
-        exposure = KNXExposeSensor(
+        exposure = KNX2ExposeSensor(
             hass,
             xknx=xknx,
             config=config,
@@ -64,8 +64,8 @@ def create_knx_exposure(
     return exposure
 
 
-class KNXExposeSensor:
-    """Object to Expose Home Assistant entity to KNX bus."""
+class KNX2ExposeSensor:
+    """Object to Expose Home Assistant entity to KNX2 bus."""
 
     def __init__(
         self,
@@ -79,20 +79,20 @@ class KNXExposeSensor:
 
         self.entity_id: str = config[CONF_ENTITY_ID]
         self.expose_attribute: str | None = config.get(
-            ExposeSchema.CONF_KNX_EXPOSE_ATTRIBUTE
+            ExposeSchema.CONF_KNX2_EXPOSE_ATTRIBUTE
         )
-        self.expose_default = config.get(ExposeSchema.CONF_KNX_EXPOSE_DEFAULT)
-        self.expose_type: int | str = config[ExposeSchema.CONF_KNX_EXPOSE_TYPE]
+        self.expose_default = config.get(ExposeSchema.CONF_KNX2_EXPOSE_DEFAULT)
+        self.expose_type: int | str = config[ExposeSchema.CONF_KNX2_EXPOSE_TYPE]
         self.value_template: Template | None = config.get(CONF_VALUE_TEMPLATE)
 
         self._remove_listener: Callable[[], None] | None = None
         self.device: ExposeSensor = ExposeSensor(
             xknx=self.xknx,
             name=f"{self.entity_id}__{self.expose_attribute or "state"}",
-            group_address=config[KNX_ADDRESS],
+            group_address=config[KNX2_ADDRESS],
             respond_to_read=config[CONF_RESPOND_TO_READ],
             value_type=self.expose_type,
-            cooldown=config[ExposeSchema.CONF_KNX_EXPOSE_COOLDOWN],
+            cooldown=config[ExposeSchema.CONF_KNX2_EXPOSE_COOLDOWN],
         )
 
     @callback
@@ -141,7 +141,7 @@ class KNXExposeSensor:
                 )
             except (TemplateError, TypeError, ValueError) as err:
                 _LOGGER.warning(
-                    "Error rendering value template for KNX expose %s %s: %s",
+                    "Error rendering value template for KNX2 expose %s %s: %s",
                     self.device.name,
                     self.value_template.template,
                     err,
@@ -164,7 +164,7 @@ class KNXExposeSensor:
                     return str(value)[:14]
             except (ValueError, TypeError) as err:
                 _LOGGER.warning(
-                    'Could not expose %s %s value "%s" to KNX: Conversion failed: %s',
+                    'Could not expose %s %s value "%s" to KNX2: Conversion failed: %s',
                     self.entity_id,
                     self.expose_attribute or "state",
                     value,
@@ -183,15 +183,15 @@ class KNXExposeSensor:
         old_value = self._get_expose_value(old_state) if old_state is not None else None
         # don't send same value sequentially
         if new_value != old_value:
-            await self._async_set_knx_value(new_value)
+            await self._async_set_knx2_value(new_value)
 
-    async def _async_set_knx_value(self, value: StateType) -> None:
+    async def _async_set_knx2_value(self, value: StateType) -> None:
         """Set new value on xknx ExposeSensor."""
         try:
             await self.device.set(value)
         except ConversionError as err:
             _LOGGER.warning(
-                'Could not expose %s %s value "%s" to KNX: %s',
+                'Could not expose %s %s value "%s" to KNX2: %s',
                 self.entity_id,
                 self.expose_attribute or "state",
                 value,
@@ -199,13 +199,13 @@ class KNXExposeSensor:
             )
 
 
-class KNXExposeTime:
-    """Object to Expose Time/Date object to KNX bus."""
+class KNX2ExposeTime:
+    """Object to Expose Time/Date object to KNX2 bus."""
 
     def __init__(self, xknx: XKNX, config: ConfigType) -> None:
         """Initialize of Expose class."""
         self.xknx = xknx
-        expose_type = config[ExposeSchema.CONF_KNX_EXPOSE_TYPE]
+        expose_type = config[ExposeSchema.CONF_KNX2_EXPOSE_TYPE]
         xknx_device_cls: type[DateDevice | DateTimeDevice | TimeDevice]
         match expose_type:
             case ExposeSchema.CONF_DATE:
@@ -218,7 +218,7 @@ class KNXExposeTime:
             self.xknx,
             name=expose_type.capitalize(),
             localtime=True,
-            group_address=config[KNX_ADDRESS],
+            group_address=config[KNX2_ADDRESS],
         )
 
     @callback

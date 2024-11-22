@@ -1,4 +1,4 @@
-"""Support KNX devices."""
+"""Support KNX2 devices."""
 
 from __future__ import annotations
 
@@ -36,39 +36,39 @@ from homeassistant.helpers.storage import STORAGE_DIR
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
-    CONF_KNX_CONNECTION_TYPE,
-    CONF_KNX_EXPOSE,
-    CONF_KNX_INDIVIDUAL_ADDRESS,
-    CONF_KNX_KNXKEY_FILENAME,
-    CONF_KNX_KNXKEY_PASSWORD,
-    CONF_KNX_LOCAL_IP,
-    CONF_KNX_MCAST_GRP,
-    CONF_KNX_MCAST_PORT,
-    CONF_KNX_RATE_LIMIT,
-    CONF_KNX_ROUTE_BACK,
-    CONF_KNX_ROUTING,
-    CONF_KNX_ROUTING_BACKBONE_KEY,
-    CONF_KNX_ROUTING_SECURE,
-    CONF_KNX_ROUTING_SYNC_LATENCY_TOLERANCE,
-    CONF_KNX_SECURE_DEVICE_AUTHENTICATION,
-    CONF_KNX_SECURE_USER_ID,
-    CONF_KNX_SECURE_USER_PASSWORD,
-    CONF_KNX_STATE_UPDATER,
-    CONF_KNX_TELEGRAM_LOG_SIZE,
-    CONF_KNX_TUNNELING,
-    CONF_KNX_TUNNELING_TCP,
-    CONF_KNX_TUNNELING_TCP_SECURE,
+    CONF_KNX2_CONNECTION_TYPE,
+    CONF_KNX2_EXPOSE,
+    CONF_KNX2_INDIVIDUAL_ADDRESS,
+    CONF_KNX2_KNX2KEY_FILENAME,
+    CONF_KNX2_KNX2KEY_PASSWORD,
+    CONF_KNX2_LOCAL_IP,
+    CONF_KNX2_MCAST_GRP,
+    CONF_KNX2_MCAST_PORT,
+    CONF_KNX2_RATE_LIMIT,
+    CONF_KNX2_ROUTE_BACK,
+    CONF_KNX2_ROUTING,
+    CONF_KNX2_ROUTING_BACKBONE_KEY,
+    CONF_KNX2_ROUTING_SECURE,
+    CONF_KNX2_ROUTING_SYNC_LATENCY_TOLERANCE,
+    CONF_KNX2_SECURE_DEVICE_AUTHENTICATION,
+    CONF_KNX2_SECURE_USER_ID,
+    CONF_KNX2_SECURE_USER_PASSWORD,
+    CONF_KNX2_STATE_UPDATER,
+    CONF_KNX2_TELEGRAM_LOG_SIZE,
+    CONF_KNX2_TUNNELING,
+    CONF_KNX2_TUNNELING_TCP,
+    CONF_KNX2_TUNNELING_TCP_SECURE,
     DATA_HASS_CONFIG,
     DOMAIN,
-    KNX_ADDRESS,
-    KNX_MODULE_KEY,
+    KNX2_ADDRESS,
+    KNX2_MODULE_KEY,
     SUPPORTED_PLATFORMS_UI,
     SUPPORTED_PLATFORMS_YAML,
     TELEGRAM_LOG_DEFAULT,
 )
-from .device import KNXInterfaceDevice
-from .expose import KNXExposeSensor, KNXExposeTime, create_knx_exposure
-from .project import STORAGE_KEY as PROJECT_STORAGE_KEY, KNXProject
+from .device import KNX2InterfaceDevice
+from .expose import KNX2ExposeSensor, KNX2ExposeTime, create_knx_exposure
+from .project import STORAGE_KEY as PROJECT_STORAGE_KEY, KNX2Project
 from .schema import (
     BinarySensorSchema,
     ButtonSchema,
@@ -91,25 +91,25 @@ from .schema import (
     WeatherSchema,
 )
 from .services import register_knx_services
-from .storage.config_store import KNXConfigStore
+from .storage.config_store import KNX2ConfigStore
 from .telegrams import STORAGE_KEY as TELEGRAMS_STORAGE_KEY, Telegrams
 from .websocket import register_panel
 
 _LOGGER = logging.getLogger(__name__)
 
-_KNX_YAML_CONFIG: Final = "knx_yaml_config"
+_KNX2_YAML_CONFIG: Final = "knx2_yaml_config"
 
 CONFIG_SCHEMA = vol.Schema(
     {
         DOMAIN: vol.All(
             # deprecated since 2021.12
-            cv.deprecated(CONF_KNX_STATE_UPDATER),
-            cv.deprecated(CONF_KNX_RATE_LIMIT),
-            cv.deprecated(CONF_KNX_ROUTING),
-            cv.deprecated(CONF_KNX_TUNNELING),
-            cv.deprecated(CONF_KNX_INDIVIDUAL_ADDRESS),
-            cv.deprecated(CONF_KNX_MCAST_GRP),
-            cv.deprecated(CONF_KNX_MCAST_PORT),
+            cv.deprecated(CONF_KNX2_STATE_UPDATER),
+            cv.deprecated(CONF_KNX2_RATE_LIMIT),
+            cv.deprecated(CONF_KNX2_ROUTING),
+            cv.deprecated(CONF_KNX2_TUNNELING),
+            cv.deprecated(CONF_KNX2_INDIVIDUAL_ADDRESS),
+            cv.deprecated(CONF_KNX2_MCAST_GRP),
+            cv.deprecated(CONF_KNX2_MCAST_PORT),
             cv.deprecated("event_filter"),
             # deprecated since 2021.4
             cv.deprecated("config_file"),
@@ -146,20 +146,20 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Start the KNX integration."""
+    """Start the KNX2 integration."""
     hass.data[DATA_HASS_CONFIG] = config
     if (conf := config.get(DOMAIN)) is not None:
-        hass.data[_KNX_YAML_CONFIG] = dict(conf)
+        hass.data[_KNX2_YAML_CONFIG] = dict(conf)
 
-    register_knx_services(hass)
+    register_knx2_services(hass)
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load a config entry."""
-    # `_KNX_YAML_CONFIG` is only set in async_setup.
-    # It's None when reloading the integration or no `knx` key in configuration.yaml
-    config = hass.data.pop(_KNX_YAML_CONFIG, None)
+    # `_KNX2_YAML_CONFIG` is only set in async_setup.
+    # It's None when reloading the integration or no `knx2` key in configuration.yaml
+    config = hass.data.pop(_KNX2_YAML_CONFIG, None)
     if config is None:
         _conf = await async_integration_yaml_config(hass, DOMAIN)
         if not _conf or DOMAIN not in _conf:
@@ -168,17 +168,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         else:
             config = _conf[DOMAIN]
     try:
-        knx_module = KNXModule(hass, config, entry)
-        await knx_module.start()
+        knx2_module = KNX2Module(hass, config, entry)
+        await knx2_module.start()
     except XKNXException as ex:
         raise ConfigEntryNotReady from ex
 
-    hass.data[KNX_MODULE_KEY] = knx_module
+    hass.data[KNX2_MODULE_KEY] = knx2_module
 
-    if CONF_KNX_EXPOSE in config:
-        for expose_config in config[CONF_KNX_EXPOSE]:
-            knx_module.exposures.append(
-                create_knx_exposure(hass, knx_module.xknx, expose_config)
+    if CONF_KNX2_EXPOSE in config:
+        for expose_config in config[CONF_KNX2_EXPOSE]:
+            knx2_module.exposures.append(
+                create_knx_exposure(hass, knx2_module.xknx, expose_config)
             )
     configured_platforms_yaml = {
         platform for platform in SUPPORTED_PLATFORMS_YAML if platform in config
@@ -198,19 +198,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unloading the KNX platforms."""
-    knx_module = hass.data.get(KNX_MODULE_KEY)
-    if not knx_module:
+    """Unloading the KNX2 platforms."""
+    knx2_module = hass.data.get(KNX2_MODULE_KEY)
+    if not knx2_module:
         #  if not loaded directly return
         return True
 
-    for exposure in knx_module.exposures:
+    for exposure in knx2_module.exposures:
         exposure.async_remove()
 
     configured_platforms_yaml = {
         platform
         for platform in SUPPORTED_PLATFORMS_YAML
-        if platform in knx_module.config_yaml
+        if platform in knx2_module.config_yaml
     }
     unload_ok = await hass.config_entries.async_unload_platforms(
         entry,
@@ -221,7 +221,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         },
     )
     if unload_ok:
-        await knx_module.stop()
+        await knx2_module.stop()
         hass.data.pop(DOMAIN)
 
     return unload_ok
@@ -235,11 +235,11 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Remove a config entry."""
 
-    def remove_files(storage_dir: Path, knxkeys_filename: str | None) -> None:
-        """Remove KNX files."""
-        if knxkeys_filename is not None:
+    def remove_files(storage_dir: Path, knx2keys_filename: str | None) -> None:
+        """Remove KNX2 files."""
+        if knx2keys_filename is not None:
             with contextlib.suppress(FileNotFoundError):
-                (storage_dir / knxkeys_filename).unlink()
+                (storage_dir / knx2keys_filename).unlink()
         with contextlib.suppress(FileNotFoundError):
             (storage_dir / PROJECT_STORAGE_KEY).unlink()
         with contextlib.suppress(FileNotFoundError):
@@ -248,48 +248,48 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
             (storage_dir / DOMAIN).rmdir()
 
     storage_dir = Path(hass.config.path(STORAGE_DIR))
-    knxkeys_filename = entry.data.get(CONF_KNX_KNXKEY_FILENAME)
-    await hass.async_add_executor_job(remove_files, storage_dir, knxkeys_filename)
+    knx2keys_filename = entry.data.get(CONF_KNX2_KNX2KEY_FILENAME)
+    await hass.async_add_executor_job(remove_files, storage_dir, knx2keys_filename)
 
 
 async def async_remove_config_entry_device(
     hass: HomeAssistant, config_entry: ConfigEntry, device_entry: DeviceEntry
 ) -> bool:
     """Remove a config entry from a device."""
-    knx_module = hass.data[KNX_MODULE_KEY]
+    knx2_module = hass.data[KNX2_MODULE_KEY]
     if not device_entry.identifiers.isdisjoint(
-        knx_module.interface_device.device_info["identifiers"]
+        knx2_module.interface_device.device_info["identifiers"]
     ):
         # can not remove interface device
         return False
-    for entity in knx_module.config_store.get_entity_entries():
+    for entity in knx2_module.config_store.get_entity_entries():
         if entity.device_id == device_entry.id:
-            await knx_module.config_store.delete_entity(entity.entity_id)
+            await knx2_module.config_store.delete_entity(entity.entity_id)
     return True
 
 
-class KNXModule:
-    """Representation of KNX Object."""
+class KNX2Module:
+    """Representation of KNX2 Object."""
 
     def __init__(
         self, hass: HomeAssistant, config: ConfigType, entry: ConfigEntry
     ) -> None:
-        """Initialize KNX module."""
+        """Initialize KNX2 module."""
         self.hass = hass
         self.config_yaml = config
         self.connected = False
-        self.exposures: list[KNXExposeSensor | KNXExposeTime] = []
-        self.service_exposures: dict[str, KNXExposeSensor | KNXExposeTime] = {}
+        self.exposures: list[KNX2ExposeSensor | KNX2ExposeTime] = []
+        self.service_exposures: dict[str, KNX2ExposeSensor | KNX2ExposeTime] = {}
         self.entry = entry
 
-        self.project = KNXProject(hass=hass, entry=entry)
-        self.config_store = KNXConfigStore(hass=hass, config_entry=entry)
+        self.project = KNX2Project(hass=hass, entry=entry)
+        self.config_store = KNX2ConfigStore(hass=hass, config_entry=entry)
 
         self.xknx = XKNX(
             address_format=self.project.get_address_format(),
             connection_config=self.connection_config(),
-            rate_limit=self.entry.data[CONF_KNX_RATE_LIMIT],
-            state_updater=self.entry.data[CONF_KNX_STATE_UPDATER],
+            rate_limit=self.entry.data[CONF_KNX2_RATE_LIMIT],
+            state_updater=self.entry.data[CONF_KNX2_STATE_UPDATER],
         )
         self.xknx.connection_manager.register_connection_state_changed_cb(
             self.connection_state_changed_cb
@@ -298,15 +298,15 @@ class KNXModule:
             hass=hass,
             xknx=self.xknx,
             project=self.project,
-            log_size=entry.data.get(CONF_KNX_TELEGRAM_LOG_SIZE, TELEGRAM_LOG_DEFAULT),
+            log_size=entry.data.get(CONF_KNX2_TELEGRAM_LOG_SIZE, TELEGRAM_LOG_DEFAULT),
         )
-        self.interface_device = KNXInterfaceDevice(
+        self.interface_device = KNX2InterfaceDevice(
             hass=hass, entry=entry, xknx=self.xknx
         )
 
         self._address_filter_transcoder: dict[AddressFilter, type[DPTBase]] = {}
         self.group_address_transcoder: dict[DeviceGroupAddress, type[DPTBase]] = {}
-        self.knx_event_callback: TelegramQueue.Callback = self.register_event_callback()
+        self.knx2_event_callback: TelegramQueue.Callback = self.register_event_callback()
 
         self.entry.async_on_unload(
             self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, self.stop)
@@ -327,86 +327,86 @@ class KNXModule:
 
     def connection_config(self) -> ConnectionConfig:
         """Return the connection_config."""
-        _conn_type: str = self.entry.data[CONF_KNX_CONNECTION_TYPE]
-        _knxkeys_file: str | None = (
+        _conn_type: str = self.entry.data[CONF_KNX2_CONNECTION_TYPE]
+        _knx2keys_file: str | None = (
             self.hass.config.path(
                 STORAGE_DIR,
-                self.entry.data[CONF_KNX_KNXKEY_FILENAME],
+                self.entry.data[CONF_KNX2_KNX2KEY_FILENAME],
             )
-            if self.entry.data.get(CONF_KNX_KNXKEY_FILENAME) is not None
+            if self.entry.data.get(CONF_KNX2_KNX2KEY_FILENAME) is not None
             else None
         )
-        if _conn_type == CONF_KNX_ROUTING:
+        if _conn_type == CONF_KNX2_ROUTING:
             return ConnectionConfig(
                 connection_type=ConnectionType.ROUTING,
-                individual_address=self.entry.data[CONF_KNX_INDIVIDUAL_ADDRESS],
-                multicast_group=self.entry.data[CONF_KNX_MCAST_GRP],
-                multicast_port=self.entry.data[CONF_KNX_MCAST_PORT],
-                local_ip=self.entry.data.get(CONF_KNX_LOCAL_IP),
+                individual_address=self.entry.data[CONF_KNX2_INDIVIDUAL_ADDRESS],
+                multicast_group=self.entry.data[CONF_KNX2_MCAST_GRP],
+                multicast_port=self.entry.data[CONF_KNX2_MCAST_PORT],
+                local_ip=self.entry.data.get(CONF_KNX2_LOCAL_IP),
                 auto_reconnect=True,
                 secure_config=SecureConfig(
-                    knxkeys_password=self.entry.data.get(CONF_KNX_KNXKEY_PASSWORD),
-                    knxkeys_file_path=_knxkeys_file,
+                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knx2keys_file_path=_knx2keys_file,
                 ),
                 threaded=True,
             )
-        if _conn_type == CONF_KNX_TUNNELING:
+        if _conn_type == CONF_KNX2_TUNNELING:
             return ConnectionConfig(
                 connection_type=ConnectionType.TUNNELING,
                 gateway_ip=self.entry.data[CONF_HOST],
                 gateway_port=self.entry.data[CONF_PORT],
-                local_ip=self.entry.data.get(CONF_KNX_LOCAL_IP),
-                route_back=self.entry.data.get(CONF_KNX_ROUTE_BACK, False),
+                local_ip=self.entry.data.get(CONF_KNX2_LOCAL_IP),
+                route_back=self.entry.data.get(CONF_KNX2_ROUTE_BACK, False),
                 auto_reconnect=True,
                 secure_config=SecureConfig(
-                    knxkeys_password=self.entry.data.get(CONF_KNX_KNXKEY_PASSWORD),
-                    knxkeys_file_path=_knxkeys_file,
+                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knx2keys_file_path=_knx2keys_file,
                 ),
                 threaded=True,
             )
-        if _conn_type == CONF_KNX_TUNNELING_TCP:
+        if _conn_type == CONF_KNX2_TUNNELING_TCP:
             return ConnectionConfig(
                 connection_type=ConnectionType.TUNNELING_TCP,
                 gateway_ip=self.entry.data[CONF_HOST],
                 gateway_port=self.entry.data[CONF_PORT],
                 auto_reconnect=True,
                 secure_config=SecureConfig(
-                    knxkeys_password=self.entry.data.get(CONF_KNX_KNXKEY_PASSWORD),
-                    knxkeys_file_path=_knxkeys_file,
+                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knx2keys_file_path=_knx2keys_file,
                 ),
                 threaded=True,
             )
-        if _conn_type == CONF_KNX_TUNNELING_TCP_SECURE:
+        if _conn_type == CONF_KNX2_TUNNELING_TCP_SECURE:
             return ConnectionConfig(
                 connection_type=ConnectionType.TUNNELING_TCP_SECURE,
                 gateway_ip=self.entry.data[CONF_HOST],
                 gateway_port=self.entry.data[CONF_PORT],
                 secure_config=SecureConfig(
-                    user_id=self.entry.data.get(CONF_KNX_SECURE_USER_ID),
-                    user_password=self.entry.data.get(CONF_KNX_SECURE_USER_PASSWORD),
+                    user_id=self.entry.data.get(CONF_KNX2_SECURE_USER_ID),
+                    user_password=self.entry.data.get(CONF_KNX2_SECURE_USER_PASSWORD),
                     device_authentication_password=self.entry.data.get(
-                        CONF_KNX_SECURE_DEVICE_AUTHENTICATION
+                        CONF_KNX2_SECURE_DEVICE_AUTHENTICATION
                     ),
-                    knxkeys_password=self.entry.data.get(CONF_KNX_KNXKEY_PASSWORD),
-                    knxkeys_file_path=_knxkeys_file,
+                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knx2keys_file_path=_knx2keys_file,
                 ),
                 auto_reconnect=True,
                 threaded=True,
             )
-        if _conn_type == CONF_KNX_ROUTING_SECURE:
+        if _conn_type == CONF_KNX2_ROUTING_SECURE:
             return ConnectionConfig(
                 connection_type=ConnectionType.ROUTING_SECURE,
-                individual_address=self.entry.data[CONF_KNX_INDIVIDUAL_ADDRESS],
-                multicast_group=self.entry.data[CONF_KNX_MCAST_GRP],
-                multicast_port=self.entry.data[CONF_KNX_MCAST_PORT],
-                local_ip=self.entry.data.get(CONF_KNX_LOCAL_IP),
+                individual_address=self.entry.data[CONF_KNX2_INDIVIDUAL_ADDRESS],
+                multicast_group=self.entry.data[CONF_KNX2_MCAST_GRP],
+                multicast_port=self.entry.data[CONF_KNX2_MCAST_PORT],
+                local_ip=self.entry.data.get(CONF_KNX2_LOCAL_IP),
                 secure_config=SecureConfig(
-                    backbone_key=self.entry.data.get(CONF_KNX_ROUTING_BACKBONE_KEY),
+                    backbone_key=self.entry.data.get(CONF_KNX2_ROUTING_BACKBONE_KEY),
                     latency_ms=self.entry.data.get(
-                        CONF_KNX_ROUTING_SYNC_LATENCY_TOLERANCE
+                        CONF_KNX2_ROUTING_SYNC_LATENCY_TOLERANCE
                     ),
-                    knxkeys_password=self.entry.data.get(CONF_KNX_KNXKEY_PASSWORD),
-                    knxkeys_file_path=_knxkeys_file,
+                    knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                    knx2keys_file_path=_knx2keys_file,
                 ),
                 auto_reconnect=True,
                 threaded=True,
@@ -414,20 +414,20 @@ class KNXModule:
         return ConnectionConfig(
             auto_reconnect=True,
             secure_config=SecureConfig(
-                knxkeys_password=self.entry.data.get(CONF_KNX_KNXKEY_PASSWORD),
-                knxkeys_file_path=_knxkeys_file,
+                knx2keys_password=self.entry.data.get(CONF_KNX2_KNX2KEY_PASSWORD),
+                knx2keys_file_path=_knx2keys_file,
             ),
             threaded=True,
         )
 
     def connection_state_changed_cb(self, state: XknxConnectionState) -> None:
-        """Call invoked after a KNX connection state change was received."""
+        """Call invoked after a KNX2 connection state change was received."""
         self.connected = state == XknxConnectionState.CONNECTED
         for device in self.xknx.devices:
             device.after_update()
 
     def telegram_received_cb(self, telegram: Telegram) -> None:
-        """Call invoked after a KNX telegram was received."""
+        """Call invoked after a KNX2 telegram was received."""
         # Not all telegrams have serializable data.
         data: int | tuple[int, ...] | None = None
         value = None
@@ -455,7 +455,7 @@ class KNXModule:
                 except (ConversionError, CouldNotParseTelegram) as err:
                     _LOGGER.warning(
                         (
-                            "Error in `knx_event` at decoding type '%s' from"
+                            "Error in `knx2_event` at decoding type '%s' from"
                             " telegram %s\n%s"
                         ),
                         transcoder.__name__,
@@ -464,7 +464,7 @@ class KNXModule:
                     )
 
         self.hass.bus.async_fire(
-            "knx_event",
+            "knx2_event",
             {
                 "data": data,
                 "destination": str(telegram.destination_address),
@@ -476,10 +476,10 @@ class KNXModule:
         )
 
     def register_event_callback(self) -> TelegramQueue.Callback:
-        """Register callback for knx_event within XKNX TelegramQueue."""
+        """Register callback for knx2_event within XKNX TelegramQueue."""
         address_filters = []
         for filter_set in self.config_yaml[CONF_EVENT]:
-            _filters = list(map(AddressFilter, filter_set[KNX_ADDRESS]))
+            _filters = list(map(AddressFilter, filter_set[KNX2_ADDRESS]))
             address_filters.extend(_filters)
             if (dpt := filter_set.get(CONF_TYPE)) and (
                 transcoder := DPTBase.parse_transcoder(dpt)

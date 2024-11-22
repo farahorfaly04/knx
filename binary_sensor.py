@@ -1,4 +1,4 @@
-"""Support for KNX/IP binary sensors."""
+"""Support for KNX2/IP binary sensors."""
 
 from __future__ import annotations
 
@@ -22,8 +22,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
-from .const import ATTR_COUNTER, ATTR_SOURCE, KNX_MODULE_KEY
+from . import KNX2Module
+from .const import ATTR_COUNTER, ATTR_SOURCE, KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 from .schema import BinarySensorSchema
 
@@ -33,26 +33,26 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the KNX binary sensor platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.BINARY_SENSOR]
+    """Set up the KNX2 binary sensor platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.BINARY_SENSOR]
 
     async_add_entities(
-        KNXBinarySensor(knx_module, entity_config) for entity_config in config
+        KNX2BinarySensor(knx2_module, entity_config) for entity_config in config
     )
 
 
-class KNXBinarySensor(KnxYamlEntity, BinarySensorEntity, RestoreEntity):
-    """Representation of a KNX binary sensor."""
+class KNX2BinarySensor(KnxYamlEntity, BinarySensorEntity, RestoreEntity):
+    """Representation of a KNX2 binary sensor."""
 
     _device: XknxBinarySensor
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize of KNX binary sensor."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize of KNX2 binary sensor."""
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             device=XknxBinarySensor(
-                xknx=knx_module.xknx,
+                xknx=knx2_module.xknx,
                 name=config[CONF_NAME],
                 group_address_state=config[BinarySensorSchema.CONF_STATE_ADDRESS],
                 invert=config[BinarySensorSchema.CONF_INVERT],

@@ -1,4 +1,4 @@
-"""Support for KNX/IP weather station."""
+"""Support for KNX2/IP weather station."""
 
 from __future__ import annotations
 
@@ -19,8 +19,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
-from .const import KNX_MODULE_KEY
+from . import KNX2Module
+from .const import KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 from .schema import WeatherSchema
 
@@ -30,64 +30,64 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up switch(es) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.WEATHER]
+    """Set up switch(es) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.WEATHER]
 
     async_add_entities(
-        KNXWeather(knx_module, entity_config) for entity_config in config
+        KNX2Weather(knx2_module, entity_config) for entity_config in config
     )
 
 
 def _create_weather(xknx: XKNX, config: ConfigType) -> XknxWeather:
-    """Return a KNX weather device to be used within XKNX."""
+    """Return a KNX2 weather device to be used within XKNX."""
     return XknxWeather(
         xknx,
         name=config[CONF_NAME],
         sync_state=config[WeatherSchema.CONF_SYNC_STATE],
-        group_address_temperature=config[WeatherSchema.CONF_KNX_TEMPERATURE_ADDRESS],
+        group_address_temperature=config[WeatherSchema.CONF_KNX2_TEMPERATURE_ADDRESS],
         group_address_brightness_south=config.get(
-            WeatherSchema.CONF_KNX_BRIGHTNESS_SOUTH_ADDRESS
+            WeatherSchema.CONF_KNX2_BRIGHTNESS_SOUTH_ADDRESS
         ),
         group_address_brightness_east=config.get(
-            WeatherSchema.CONF_KNX_BRIGHTNESS_EAST_ADDRESS
+            WeatherSchema.CONF_KNX2_BRIGHTNESS_EAST_ADDRESS
         ),
         group_address_brightness_west=config.get(
-            WeatherSchema.CONF_KNX_BRIGHTNESS_WEST_ADDRESS
+            WeatherSchema.CONF_KNX2_BRIGHTNESS_WEST_ADDRESS
         ),
         group_address_brightness_north=config.get(
-            WeatherSchema.CONF_KNX_BRIGHTNESS_NORTH_ADDRESS
+            WeatherSchema.CONF_KNX2_BRIGHTNESS_NORTH_ADDRESS
         ),
-        group_address_wind_speed=config.get(WeatherSchema.CONF_KNX_WIND_SPEED_ADDRESS),
+        group_address_wind_speed=config.get(WeatherSchema.CONF_KNX2_WIND_SPEED_ADDRESS),
         group_address_wind_bearing=config.get(
-            WeatherSchema.CONF_KNX_WIND_BEARING_ADDRESS
+            WeatherSchema.CONF_KNX2_WIND_BEARING_ADDRESS
         ),
-        group_address_rain_alarm=config.get(WeatherSchema.CONF_KNX_RAIN_ALARM_ADDRESS),
+        group_address_rain_alarm=config.get(WeatherSchema.CONF_KNX2_RAIN_ALARM_ADDRESS),
         group_address_frost_alarm=config.get(
-            WeatherSchema.CONF_KNX_FROST_ALARM_ADDRESS
+            WeatherSchema.CONF_KNX2_FROST_ALARM_ADDRESS
         ),
-        group_address_wind_alarm=config.get(WeatherSchema.CONF_KNX_WIND_ALARM_ADDRESS),
-        group_address_day_night=config.get(WeatherSchema.CONF_KNX_DAY_NIGHT_ADDRESS),
+        group_address_wind_alarm=config.get(WeatherSchema.CONF_KNX2_WIND_ALARM_ADDRESS),
+        group_address_day_night=config.get(WeatherSchema.CONF_KNX2_DAY_NIGHT_ADDRESS),
         group_address_air_pressure=config.get(
-            WeatherSchema.CONF_KNX_AIR_PRESSURE_ADDRESS
+            WeatherSchema.CONF_KNX2_AIR_PRESSURE_ADDRESS
         ),
-        group_address_humidity=config.get(WeatherSchema.CONF_KNX_HUMIDITY_ADDRESS),
+        group_address_humidity=config.get(WeatherSchema.CONF_KNX2_HUMIDITY_ADDRESS),
     )
 
 
-class KNXWeather(KnxYamlEntity, WeatherEntity):
-    """Representation of a KNX weather device."""
+class KNX2Weather(KnxYamlEntity, WeatherEntity):
+    """Representation of a KNX2 weather device."""
 
     _device: XknxWeather
     _attr_native_pressure_unit = UnitOfPressure.PA
     _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_native_wind_speed_unit = UnitOfSpeed.METERS_PER_SECOND
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize of a KNX sensor."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize of a KNX2 sensor."""
         super().__init__(
-            knx_module=knx_module,
-            device=_create_weather(knx_module.xknx, config),
+            knx2_module=knx2_module,
+            device=_create_weather(knx2_module.xknx, config),
         )
         self._attr_unique_id = str(self._device._temperature.group_address_state)  # noqa: SLF001
         self._attr_entity_category = config.get(CONF_ENTITY_CATEGORY)

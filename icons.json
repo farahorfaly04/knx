@@ -1,7 +1,7 @@
 {
   "entity": {
     "climate": {
-      "knx_climate": {
+      "knx2_climate": {
         "state_attributes": {
           "preset_mode": {
             "state": {

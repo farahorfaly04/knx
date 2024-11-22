@@ -1,4 +1,4 @@
-"""KNX entity store schema."""
+"""KNX2 entity store schema."""
 
 from enum import StrEnum, unique
 
@@ -48,7 +48,7 @@ from .const import (
     CONF_GA_WHITE_SWITCH,
     CONF_GA_WRITE,
 )
-from .knx_selector import GASelector
+from .knx2_selector import GASelector
 
 BASE_ENTITY_SCHEMA = vol.All(
     {
@@ -182,7 +182,7 @@ _HSV_LIGHT_SCHEMA = _COMMON_LIGHT_SCHEMA.extend(
 )
 
 
-LIGHT_KNX_SCHEMA = cv.key_value_schemas(
+LIGHT_KNX2_SCHEMA = cv.key_value_schemas(
     _LIGHT_COLOR_MODE_SCHEMA,
     default_schema=_DEFAULT_LIGHT_SCHEMA,
     value_schemas={
@@ -195,7 +195,7 @@ LIGHT_KNX_SCHEMA = cv.key_value_schemas(
 LIGHT_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ENTITY): BASE_ENTITY_SCHEMA,
-        vol.Required(DOMAIN): LIGHT_KNX_SCHEMA,
+        vol.Required(DOMAIN): LIGHT_KNX2_SCHEMA,
     }
 )
 

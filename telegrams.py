@@ -1,4 +1,4 @@
-"""KNX Telegram handler."""
+"""KNX2 Telegram handler."""
 
 from __future__ import annotations
 
@@ -19,13 +19,13 @@ import homeassistant.util.dt as dt_util
 from homeassistant.util.signal_type import SignalType
 
 from .const import DOMAIN
-from .project import KNXProject
+from .project import KNX2Project
 
 STORAGE_VERSION: Final = 1
 STORAGE_KEY: Final = f"{DOMAIN}/telegrams_history.json"
 
-# dispatcher signal for KNX interface device triggers
-SIGNAL_KNX_TELEGRAM: SignalType[Telegram, TelegramDict] = SignalType("knx_telegram")
+# dispatcher signal for KNX2 interface device triggers
+SIGNAL_KNX2_TELEGRAM: SignalType[Telegram, TelegramDict] = SignalType("knx2_telegram")
 
 
 class DecodedTelegramPayload(TypedDict):
@@ -53,13 +53,13 @@ class TelegramDict(DecodedTelegramPayload):
 
 
 class Telegrams:
-    """Class to handle KNX telegrams."""
+    """Class to handle KNX2 telegrams."""
 
     def __init__(
         self,
         hass: HomeAssistant,
         xknx: XKNX,
-        project: KNXProject,
+        project: KNX2Project,
         log_size: int,
     ) -> None:
         """Initialize Telegrams class."""
@@ -105,7 +105,7 @@ class Telegrams:
         if telegram_dict["payload"] is not None:
             # exclude GroupValueRead telegrams
             self.last_ga_telegrams[telegram_dict["destination"]] = telegram_dict
-        async_dispatcher_send(self.hass, SIGNAL_KNX_TELEGRAM, telegram, telegram_dict)
+        async_dispatcher_send(self.hass, SIGNAL_KNX2_TELEGRAM, telegram, telegram_dict)
 
     def telegram_to_dict(self, telegram: Telegram) -> TelegramDict:
         """Convert a Telegram to a dict."""
@@ -167,9 +167,9 @@ def _serializable_decoded_data(
 def decode_telegram_payload(
     payload: DPTArray | DPTBinary, transcoder: type[DPTBase]
 ) -> DecodedTelegramPayload:
-    """Decode the payload of a KNX telegram with custom transcoder."""
+    """Decode the payload of a KNX2 telegram with custom transcoder."""
     try:
-        value = transcoder.from_knx(payload)
+        value = transcoder.from_knx2(payload)
     except XKNXException:
         value = "Error decoding value"
 

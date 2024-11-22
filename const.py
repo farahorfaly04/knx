@@ -1,4 +1,4 @@
-"""Constants for the KNX integration."""
+"""Constants for the KNX2 integration."""
 
 from __future__ import annotations
 
@@ -14,57 +14,57 @@ from homeassistant.const import Platform
 from homeassistant.util.hass_dict import HassKey
 
 if TYPE_CHECKING:
-    from . import KNXModule
+    from . import KNX2Module
 
-DOMAIN: Final = "knx"
-KNX_MODULE_KEY: HassKey[KNXModule] = HassKey(DOMAIN)
+DOMAIN: Final = "knx2"
+KNX2_MODULE_KEY: HassKey[KNX2Module] = HassKey(DOMAIN)
 
 # Address is used for configuration and services by the same functions so the key has to match
-KNX_ADDRESS: Final = "address"
+KNX2_ADDRESS: Final = "address"
 
 CONF_INVERT: Final = "invert"
-CONF_KNX_EXPOSE: Final = "expose"
-CONF_KNX_INDIVIDUAL_ADDRESS: Final = "individual_address"
+CONF_KNX2_EXPOSE: Final = "expose"
+CONF_KNX2_INDIVIDUAL_ADDRESS: Final = "individual_address"
 
 ##
 # Connection constants
 ##
-CONF_KNX_CONNECTION_TYPE: Final = "connection_type"
-CONF_KNX_AUTOMATIC: Final = "automatic"
-CONF_KNX_ROUTING: Final = "routing"
+CONF_KNX2_CONNECTION_TYPE: Final = "connection_type"
+CONF_KNX2_AUTOMATIC: Final = "automatic"
+CONF_KNX2_ROUTING: Final = "routing"
 CONF_KNX_ROUTING_BACKBONE_KEY: Final = "backbone_key"
-CONF_KNX_ROUTING_SYNC_LATENCY_TOLERANCE: Final = "sync_latency_tolerance"
-CONF_KNX_ROUTING_SECURE: Final = "routing_secure"
-CONF_KNX_TUNNELING: Final = "tunneling"
-CONF_KNX_TUNNELING_TCP: Final = "tunneling_tcp"
-CONF_KNX_TUNNELING_TCP_SECURE: Final = "tunneling_tcp_secure"
-CONF_KNX_LOCAL_IP: Final = "local_ip"
-CONF_KNX_MCAST_GRP: Final = "multicast_group"
-CONF_KNX_MCAST_PORT: Final = "multicast_port"
-CONF_KNX_TUNNEL_ENDPOINT_IA: Final = "tunnel_endpoint_ia"
+CONF_KNX2_ROUTING_SYNC_LATENCY_TOLERANCE: Final = "sync_latency_tolerance"
+CONF_KNX2_ROUTING_SECURE: Final = "routing_secure"
+CONF_KNX2_TUNNELING: Final = "tunneling"
+CONF_KNX2_TUNNELING_TCP: Final = "tunneling_tcp"
+CONF_KNX2_TUNNELING_TCP_SECURE: Final = "tunneling_tcp_secure"
+CONF_KNX2_LOCAL_IP: Final = "local_ip"
+CONF_KNX2_MCAST_GRP: Final = "multicast_group"
+CONF_KNX2_MCAST_PORT: Final = "multicast_port"
+CONF_KNX2_TUNNEL_ENDPOINT_IA: Final = "tunnel_endpoint_ia"
 
-CONF_KNX_RATE_LIMIT: Final = "rate_limit"
-CONF_KNX_ROUTE_BACK: Final = "route_back"
-CONF_KNX_STATE_UPDATER: Final = "state_updater"
-CONF_KNX_DEFAULT_STATE_UPDATER: Final = True
-CONF_KNX_DEFAULT_RATE_LIMIT: Final = 0
+CONF_KNX2_RATE_LIMIT: Final = "rate_limit"
+CONF_KNX2_ROUTE_BACK: Final = "route_back"
+CONF_KNX2_STATE_UPDATER: Final = "state_updater"
+CONF_KNX2_DEFAULT_STATE_UPDATER: Final = True
+CONF_KNX2_DEFAULT_RATE_LIMIT: Final = 0
 
 DEFAULT_ROUTING_IA: Final = "0.0.240"
 
-CONF_KNX_TELEGRAM_LOG_SIZE: Final = "telegram_log_size"
+CONF_KNX2_TELEGRAM_LOG_SIZE: Final = "telegram_log_size"
 TELEGRAM_LOG_DEFAULT: Final = 1000
 TELEGRAM_LOG_MAX: Final = 25000  # ~10 MB or ~25 hours of reasonable bus load
 
 ##
 # Secure constants
 ##
-CONST_KNX_STORAGE_KEY: Final = "knx/"
-CONF_KNX_KNXKEY_FILENAME: Final = "knxkeys_filename"
-CONF_KNX_KNXKEY_PASSWORD: Final = "knxkeys_password"
+CONST_KNX2_STORAGE_KEY: Final = "knx2/"
+CONF_KNX2_KNX2KEY_FILENAME: Final = "knx2keys_filename"
+CONF_KNX2_KNX2KEY_PASSWORD: Final = "knx2keys_password"
 
-CONF_KNX_SECURE_USER_ID: Final = "user_id"
-CONF_KNX_SECURE_USER_PASSWORD: Final = "user_password"
-CONF_KNX_SECURE_DEVICE_AUTHENTICATION: Final = "device_authentication"
+CONF_KNX2_SECURE_USER_ID: Final = "user_id"
+CONF_KNX2_SECURE_USER_PASSWORD: Final = "user_password"
+CONF_KNX2_SECURE_DEVICE_AUTHENTICATION: Final = "device_authentication"
 
 
 CONF_PAYLOAD_LENGTH: Final = "payload_length"
@@ -74,7 +74,7 @@ CONF_STATE_ADDRESS: Final = "state_address"
 CONF_SYNC_STATE: Final = "sync_state"
 
 # original hass yaml config
-DATA_HASS_CONFIG: Final = "knx_hass_config"
+DATA_HASS_CONFIG: Final = "knx2_hass_config"
 
 ATTR_COUNTER: Final = "counter"
 ATTR_SOURCE: Final = "source"
@@ -83,18 +83,18 @@ ATTR_SOURCE: Final = "source"
 type AsyncMessageCallbackType = Callable[[Telegram], Awaitable[None]]
 type MessageCallbackType = Callable[[Telegram], None]
 
-SERVICE_KNX_SEND: Final = "send"
-SERVICE_KNX_ATTR_PAYLOAD: Final = "payload"
-SERVICE_KNX_ATTR_TYPE: Final = "type"
-SERVICE_KNX_ATTR_RESPONSE: Final = "response"
-SERVICE_KNX_ATTR_REMOVE: Final = "remove"
-SERVICE_KNX_EVENT_REGISTER: Final = "event_register"
-SERVICE_KNX_EXPOSURE_REGISTER: Final = "exposure_register"
-SERVICE_KNX_READ: Final = "read"
+SERVICE_KNX2_SEND: Final = "send"
+SERVICE_KNX2_ATTR_PAYLOAD: Final = "payload"
+SERVICE_KNX2_ATTR_TYPE: Final = "type"
+SERVICE_KNX2_ATTR_RESPONSE: Final = "response"
+SERVICE_KNX2_ATTR_REMOVE: Final = "remove"
+SERVICE_KNX2_EVENT_REGISTER: Final = "event_register"
+SERVICE_KNX2_EXPOSURE_REGISTER: Final = "exposure_register"
+SERVICE_KNX2_READ: Final = "read"
 
 
-class KNXConfigEntryData(TypedDict, total=False):
-    """Config entry for the KNX integration."""
+class KNX2ConfigEntryData(TypedDict, total=False):
+    """Config entry for the KNX2 integration."""
 
     connection_type: str
     individual_address: str
@@ -105,12 +105,12 @@ class KNXConfigEntryData(TypedDict, total=False):
     host: str  # only required for tunnelling
     port: int  # only required for tunnelling
     tunnel_endpoint_ia: str | None
-    # KNX secure
+    # KNX2 secure
     user_id: int | None  # not required
     user_password: str | None  # not required
     device_authentication: str | None  # not required
-    knxkeys_filename: str  # not required
-    knxkeys_password: str  # not required
+    knx2keys_filename: str  # not required
+    knx2keys_password: str  # not required
     backbone_key: str | None  # not required
     sync_latency_tolerance: int | None  # not required
     # OptionsFlow only
@@ -158,7 +158,7 @@ SUPPORTED_PLATFORMS_YAML: Final = {
 
 SUPPORTED_PLATFORMS_UI: Final = {Platform.SWITCH, Platform.LIGHT}
 
-# Map KNX controller modes to HA modes. This list might not be complete.
+# Map KNX2 controller modes to HA modes. This list might not be complete.
 CONTROLLER_MODES: Final = {
     # Map DPT 20.105 HVAC control modes
     HVACControllerMode.AUTO: HVACMode.AUTO,

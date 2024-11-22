@@ -1,4 +1,4 @@
-"""Support for KNX/IP numeric values."""
+"""Support for KNX2/IP numeric values."""
 
 from __future__ import annotations
 
@@ -22,8 +22,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
-from .const import CONF_RESPOND_TO_READ, CONF_STATE_ADDRESS, KNX_ADDRESS, KNX_MODULE_KEY
+from . import KNX2Module
+from .const import CONF_RESPOND_TO_READ, CONF_STATE_ADDRESS, KNX2_ADDRESS, KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 from .schema import NumberSchema
 
@@ -33,35 +33,35 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up number(s) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.NUMBER]
+    """Set up number(s) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.NUMBER]
 
-    async_add_entities(KNXNumber(knx_module, entity_config) for entity_config in config)
+    async_add_entities(KNX2Number(knx2_module, entity_config) for entity_config in config)
 
 
 def _create_numeric_value(xknx: XKNX, config: ConfigType) -> NumericValue:
-    """Return a KNX NumericValue to be used within XKNX."""
+    """Return a KNX2 NumericValue to be used within XKNX."""
     return NumericValue(
         xknx,
         name=config[CONF_NAME],
-        group_address=config[KNX_ADDRESS],
+        group_address=config[KNX2_ADDRESS],
         group_address_state=config.get(CONF_STATE_ADDRESS),
         respond_to_read=config[CONF_RESPOND_TO_READ],
         value_type=config[CONF_TYPE],
     )
 
 
-class KNXNumber(KnxYamlEntity, RestoreNumber):
-    """Representation of a KNX number."""
+class KNX2Number(KnxYamlEntity, RestoreNumber):
+    """Representation of a KNX2 number."""
 
     _device: NumericValue
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize a KNX number."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize a KNX2 number."""
         super().__init__(
-            knx_module=knx_module,
-            device=_create_numeric_value(knx_module.xknx, config),
+            knx2_module=knx2_module,
+            device=_create_numeric_value(knx2_module.xknx, config),
         )
         self._attr_native_max_value = config.get(
             NumberSchema.CONF_MAX,

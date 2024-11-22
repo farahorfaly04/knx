@@ -1,4 +1,4 @@
-"""Selectors for KNX."""
+"""Selectors for KNX2."""
 
 from enum import Enum
 from typing import Any
@@ -10,7 +10,7 @@ from .const import CONF_DPT, CONF_GA_PASSIVE, CONF_GA_STATE, CONF_GA_WRITE
 
 
 class GASelector:
-    """Selector for a KNX group address structure."""
+    """Selector for a KNX2 group address structure."""
 
     schema: vol.Schema
 

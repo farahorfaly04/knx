@@ -1,4 +1,4 @@
-"""Support for KNX/IP climate devices."""
+"""Support for KNX2/IP climate devices."""
 
 from __future__ import annotations
 
@@ -35,8 +35,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
-from .const import CONTROLLER_MODES, CURRENT_HVAC_ACTIONS, KNX_MODULE_KEY
+from . import KNX2Module
+from .const import CONTROLLER_MODES, CURRENT_HVAC_ACTIONS, KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 from .schema import ClimateSchema
 
@@ -49,17 +49,17 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up climate(s) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.CLIMATE]
+    """Set up climate(s) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.CLIMATE]
 
     async_add_entities(
-        KNXClimate(knx_module, entity_config) for entity_config in config
+        KNX2Climate(knx2_module, entity_config) for entity_config in config
     )
 
 
 def _create_climate(xknx: XKNX, config: ConfigType) -> XknxClimate:
-    """Return a KNX Climate device to be used within XKNX."""
+    """Return a KNX2 Climate device to be used within XKNX."""
     climate_mode = XknxClimateMode(
         xknx,
         name=f"{config[CONF_NAME]} Mode",
@@ -142,19 +142,19 @@ def _create_climate(xknx: XKNX, config: ConfigType) -> XknxClimate:
     )
 
 
-class KNXClimate(KnxYamlEntity, ClimateEntity):
-    """Representation of a KNX climate device."""
+class KNX2Climate(KnxYamlEntity, ClimateEntity):
+    """Representation of a KNX2 climate device."""
 
     _device: XknxClimate
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
-    _attr_translation_key = "knx_climate"
+    _attr_translation_key = "knx2_climate"
     _enable_turn_on_off_backwards_compatibility = False
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize of a KNX climate device."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize of a KNX2 climate device."""
         super().__init__(
-            knx_module=knx_module,
-            device=_create_climate(knx_module.xknx, config),
+            knx2_module=knx2_module,
+            device=_create_climate(knx2_module.xknx, config),
         )
         self._attr_entity_category = config.get(CONF_ENTITY_CATEGORY)
         self._attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
@@ -254,10 +254,10 @@ class KNXClimate(KnxYamlEntity, ClimateEntity):
         if (
             self._device.mode is not None
             and self._device.mode.supports_controller_mode
-            and (knx_controller_mode := CONTROLLER_MODES_INV.get(self._last_hvac_mode))
+            and (knx2_controller_mode := CONTROLLER_MODES_INV.get(self._last_hvac_mode))
             is not None
         ):
-            await self._device.mode.set_controller_mode(knx_controller_mode)
+            await self._device.mode.set_controller_mode(knx2_controller_mode)
             self.async_write_ha_state()
 
     async def async_turn_off(self) -> None:
@@ -298,8 +298,8 @@ class KNXClimate(KnxYamlEntity, ClimateEntity):
         ha_controller_modes: list[HVACMode | None] = []
         if self._device.mode is not None:
             ha_controller_modes.extend(
-                CONTROLLER_MODES.get(knx_controller_mode)
-                for knx_controller_mode in self._device.mode.controller_modes
+                CONTROLLER_MODES.get(knx2_controller_mode)
+                for knx2_controller_mode in self._device.mode.controller_modes
             )
 
         if self._device.supports_on_off:
@@ -333,9 +333,9 @@ class KNXClimate(KnxYamlEntity, ClimateEntity):
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set controller mode."""
         if self._device.mode is not None and self._device.mode.supports_controller_mode:
-            knx_controller_mode = CONTROLLER_MODES_INV.get(hvac_mode)
-            if knx_controller_mode in self._device.mode.controller_modes:
-                await self._device.mode.set_controller_mode(knx_controller_mode)
+            knx2_controller_mode = CONTROLLER_MODES_INV.get(hvac_mode)
+            if knx2_controller_mode in self._device.mode.controller_modes:
+                await self._device.mode.set_controller_mode(knx2_controller_mode)
 
         if self._device.supports_on_off:
             if hvac_mode == HVACMode.OFF:

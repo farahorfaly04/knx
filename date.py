@@ -1,4 +1,4 @@
-"""Support for KNX/IP date."""
+"""Support for KNX2/IP date."""
 
 from __future__ import annotations
 
@@ -22,13 +22,13 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
+from . import KNX2Module
 from .const import (
     CONF_RESPOND_TO_READ,
     CONF_STATE_ADDRESS,
     CONF_SYNC_STATE,
-    KNX_ADDRESS,
-    KNX_MODULE_KEY,
+    KNX2_ADDRESS,
+    KNX2_MODULE_KEY,
 )
 from .entity import KnxYamlEntity
 
@@ -38,12 +38,12 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up entities for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.DATE]
+    """Set up entities for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.DATE]
 
     async_add_entities(
-        KNXDateEntity(knx_module, entity_config) for entity_config in config
+        KNX2DateEntity(knx2_module, entity_config) for entity_config in config
     )
 
 
@@ -53,23 +53,23 @@ def _create_xknx_device(xknx: XKNX, config: ConfigType) -> XknxDateDevice:
         xknx,
         name=config[CONF_NAME],
         localtime=False,
-        group_address=config[KNX_ADDRESS],
+        group_address=config[KNX2_ADDRESS],
         group_address_state=config.get(CONF_STATE_ADDRESS),
         respond_to_read=config[CONF_RESPOND_TO_READ],
         sync_state=config[CONF_SYNC_STATE],
     )
 
 
-class KNXDateEntity(KnxYamlEntity, DateEntity, RestoreEntity):
-    """Representation of a KNX date."""
+class KNX2DateEntity(KnxYamlEntity, DateEntity, RestoreEntity):
+    """Representation of a KNX2 date."""
 
     _device: XknxDateDevice
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize a KNX time."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize a KNX2 time."""
         super().__init__(
-            knx_module=knx_module,
-            device=_create_xknx_device(knx_module.xknx, config),
+            knx2_module=knx2_module,
+            device=_create_xknx_device(knx2_module.xknx, config),
         )
         self._attr_entity_category = config.get(CONF_ENTITY_CATEGORY)
         self._attr_unique_id = str(self._device.remote_value.group_address)

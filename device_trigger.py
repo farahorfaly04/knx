@@ -1,4 +1,4 @@
-"""Provides device triggers for KNX."""
+"""Provides device triggers for KNX2."""
 
 from __future__ import annotations
 
@@ -17,14 +17,14 @@ from homeassistant.helpers.trigger import TriggerActionType, TriggerInfo
 from homeassistant.helpers.typing import ConfigType
 
 from . import trigger
-from .const import DOMAIN, KNX_MODULE_KEY
+from .const import DOMAIN, KNX2_MODULE_KEY
 from .trigger import (
-    CONF_KNX_DESTINATION,
-    CONF_KNX_GROUP_VALUE_READ,
-    CONF_KNX_GROUP_VALUE_RESPONSE,
-    CONF_KNX_GROUP_VALUE_WRITE,
-    CONF_KNX_INCOMING,
-    CONF_KNX_OUTGOING,
+    CONF_KNX2_DESTINATION,
+    CONF_KNX2_GROUP_VALUE_READ,
+    CONF_KNX2_GROUP_VALUE_RESPONSE,
+    CONF_KNX2_GROUP_VALUE_WRITE,
+    CONF_KNX2_INCOMING,
+    CONF_KNX2_OUTGOING,
     PLATFORM_TYPE_TRIGGER_TELEGRAM,
     TELEGRAM_TRIGGER_SCHEMA,
     TRIGGER_SCHEMA as TRIGGER_TRIGGER_SCHEMA,
@@ -43,12 +43,12 @@ TRIGGER_SCHEMA: Final = DEVICE_TRIGGER_BASE_SCHEMA.extend(
 async def async_get_triggers(
     hass: HomeAssistant, device_id: str
 ) -> list[dict[str, Any]]:
-    """List device triggers for KNX devices."""
+    """List device triggers for KNX2 devices."""
     triggers = []
 
-    knx = hass.data[KNX_MODULE_KEY]
-    if knx.interface_device.device.id == device_id:
-        # Add trigger for KNX telegrams to interface device
+    knx2 = hass.data[KNX2_MODULE_KEY]
+    if knx2.interface_device.device.id == device_id:
+        # Add trigger for KNX2 telegrams to interface device
         triggers.append(
             {
                 # Default fields when initializing the trigger
@@ -66,7 +66,7 @@ async def async_get_trigger_capabilities(
     hass: HomeAssistant, config: ConfigType
 ) -> dict[str, vol.Schema]:
     """List trigger capabilities."""
-    project = hass.data[KNX_MODULE_KEY].project
+    project = hass.data[KNX2_MODULE_KEY].project
     options = [
         selector.SelectOptionDict(value=ga.address, label=f"{ga.address} - {ga.name}")
         for ga in project.group_addresses.values()
@@ -74,7 +74,7 @@ async def async_get_trigger_capabilities(
     return {
         "extra_fields": vol.Schema(
             {
-                vol.Optional(CONF_KNX_DESTINATION): selector.SelectSelector(
+                vol.Optional(CONF_KNX2_DESTINATION): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         mode=selector.SelectSelectorMode.DROPDOWN,
                         multiple=True,
@@ -83,19 +83,19 @@ async def async_get_trigger_capabilities(
                     ),
                 ),
                 vol.Optional(
-                    CONF_KNX_GROUP_VALUE_WRITE, default=True
+                    CONF_KNX2_GROUP_VALUE_WRITE, default=True
                 ): selector.BooleanSelector(),
                 vol.Optional(
-                    CONF_KNX_GROUP_VALUE_RESPONSE, default=True
+                    CONF_KNX2_GROUP_VALUE_RESPONSE, default=True
                 ): selector.BooleanSelector(),
                 vol.Optional(
-                    CONF_KNX_GROUP_VALUE_READ, default=True
+                    CONF_KNX2_GROUP_VALUE_READ, default=True
                 ): selector.BooleanSelector(),
                 vol.Optional(
-                    CONF_KNX_INCOMING, default=True
+                    CONF_KNX2_INCOMING, default=True
                 ): selector.BooleanSelector(),
                 vol.Optional(
-                    CONF_KNX_OUTGOING, default=True
+                    CONF_KNX2_OUTGOING, default=True
                 ): selector.BooleanSelector(),
             }
         )

@@ -1,4 +1,4 @@
-"""Support for KNX/IP buttons."""
+"""Support for KNX2/IP buttons."""
 
 from __future__ import annotations
 
@@ -11,8 +11,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
-from .const import CONF_PAYLOAD_LENGTH, KNX_ADDRESS, KNX_MODULE_KEY
+from . import KNX2Module
+from .const import CONF_PAYLOAD_LENGTH, KNX2_ADDRESS, KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 
 
@@ -21,27 +21,27 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the KNX binary sensor platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.BUTTON]
+    """Set up the KNX2 binary sensor platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.BUTTON]
 
-    async_add_entities(KNXButton(knx_module, entity_config) for entity_config in config)
+    async_add_entities(KNX2Button(knx2_module, entity_config) for entity_config in config)
 
 
-class KNXButton(KnxYamlEntity, ButtonEntity):
-    """Representation of a KNX button."""
+class KNX2Button(KnxYamlEntity, ButtonEntity):
+    """Representation of a KNX2 button."""
 
     _device: XknxRawValue
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize a KNX button."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize a KNX2 button."""
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             device=XknxRawValue(
-                xknx=knx_module.xknx,
+                xknx=knx2_module.xknx,
                 name=config[CONF_NAME],
                 payload_length=config[CONF_PAYLOAD_LENGTH],
-                group_address=config[KNX_ADDRESS],
+                group_address=config[KNX2_ADDRESS],
             ),
         )
         self._payload = config[CONF_PAYLOAD]

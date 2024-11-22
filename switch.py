@@ -51,26 +51,26 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up switch(es) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
+    knx2_module = hass.data[KNX_MODULE_KEY]
     platform = async_get_current_platform()
-    knx_module.config_store.add_platform(
+    knx2_module.config_store.add_platform(
         platform=Platform.SWITCH,
         controller=KnxUiEntityPlatformController(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             entity_platform=platform,
             entity_class=KnxUiSwitch,
         ),
     )
 
     entities: list[KnxYamlEntity | KnxUiEntity] = []
-    if yaml_platform_config := knx_module.config_yaml.get(Platform.SWITCH):
+    if yaml_platform_config := knx2_module.config_yaml.get(Platform.SWITCH):
         entities.extend(
-            KnxYamlSwitch(knx_module, entity_config)
+            KnxYamlSwitch(knx2_module, entity_config)
             for entity_config in yaml_platform_config
         )
-    if ui_config := knx_module.config_store.data["entities"].get(Platform.SWITCH):
+    if ui_config := knx2_module.config_store.data["entities"].get(Platform.SWITCH):
         entities.extend(
-            KnxUiSwitch(knx_module, unique_id, config)
+            KnxUiSwitch(knx2_module, unique_id, config)
             for unique_id, config in ui_config.items()
         )
     if entities:
@@ -110,12 +110,12 @@ class KnxYamlSwitch(_KnxSwitch, KnxYamlEntity):
 
     _device: XknxSwitch
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
+    def __init__(self, knx2_module: KNXModule, config: ConfigType) -> None:
         """Initialize of KNX switch."""
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             device=XknxSwitch(
-                xknx=knx_module.xknx,
+                xknx=knx2_module.xknx,
                 name=config[CONF_NAME],
                 group_address=config[KNX_ADDRESS],
                 group_address_state=config.get(SwitchSchema.CONF_STATE_ADDRESS),
@@ -134,16 +134,16 @@ class KnxUiSwitch(_KnxSwitch, KnxUiEntity):
     _device: XknxSwitch
 
     def __init__(
-        self, knx_module: KNXModule, unique_id: str, config: dict[str, Any]
+        self, knx2_module: KNXModule, unique_id: str, config: dict[str, Any]
     ) -> None:
         """Initialize KNX switch."""
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             unique_id=unique_id,
             entity_config=config[CONF_ENTITY],
         )
         self._device = XknxSwitch(
-            knx_module.xknx,
+            knx2_module.xknx,
             name=config[CONF_ENTITY][CONF_NAME],
             group_address=config[DOMAIN][CONF_GA_SWITCH][CONF_GA_WRITE],
             group_address_state=[

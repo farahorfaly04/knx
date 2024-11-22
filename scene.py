@@ -1,4 +1,4 @@
-"""Support for KNX scenes."""
+"""Support for KNX2 scenes."""
 
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
-from .const import KNX_ADDRESS, KNX_MODULE_KEY
+from . import KNX2Module
+from .const import KNX2_ADDRESS, KNX2_MODULE_KEY
 from .entity import KnxYamlEntity
 from .schema import SceneSchema
 
@@ -24,26 +24,26 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up scene(s) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.SCENE]
+    """Set up scene(s) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.SCENE]
 
-    async_add_entities(KNXScene(knx_module, entity_config) for entity_config in config)
+    async_add_entities(KNX2Scene(knx2_module, entity_config) for entity_config in config)
 
 
-class KNXScene(KnxYamlEntity, Scene):
-    """Representation of a KNX scene."""
+class KNX2Scene(KnxYamlEntity, Scene):
+    """Representation of a KNX2 scene."""
 
     _device: XknxScene
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Init KNX scene."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Init KNX2 scene."""
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             device=XknxScene(
-                xknx=knx_module.xknx,
+                xknx=knx2_module.xknx,
                 name=config[CONF_NAME],
-                group_address=config[KNX_ADDRESS],
+                group_address=config[KNX2_ADDRESS],
                 scene_number=config[SceneSchema.CONF_SCENE_NUMBER],
             ),
         )

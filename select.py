@@ -1,4 +1,4 @@
-"""Support for KNX/IP select entities."""
+"""Support for KNX2/IP select entities."""
 
 from __future__ import annotations
 
@@ -20,14 +20,14 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType
 
-from . import KNXModule
+from . import KNX2Module
 from .const import (
     CONF_PAYLOAD_LENGTH,
     CONF_RESPOND_TO_READ,
     CONF_STATE_ADDRESS,
     CONF_SYNC_STATE,
-    KNX_ADDRESS,
-    KNX_MODULE_KEY,
+    KNX2_ADDRESS,
+    KNX2_MODULE_KEY,
 )
 from .entity import KnxYamlEntity
 from .schema import SelectSchema
@@ -38,36 +38,36 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up select(s) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
-    config: list[ConfigType] = knx_module.config_yaml[Platform.SELECT]
+    """Set up select(s) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
+    config: list[ConfigType] = knx2_module.config_yaml[Platform.SELECT]
 
-    async_add_entities(KNXSelect(knx_module, entity_config) for entity_config in config)
+    async_add_entities(KNX2Select(knx2_module, entity_config) for entity_config in config)
 
 
 def _create_raw_value(xknx: XKNX, config: ConfigType) -> RawValue:
-    """Return a KNX RawValue to be used within XKNX."""
+    """Return a KNX2 RawValue to be used within XKNX."""
     return RawValue(
         xknx,
         name=config[CONF_NAME],
         payload_length=config[CONF_PAYLOAD_LENGTH],
-        group_address=config[KNX_ADDRESS],
+        group_address=config[KNX2_ADDRESS],
         group_address_state=config.get(CONF_STATE_ADDRESS),
         respond_to_read=config[CONF_RESPOND_TO_READ],
         sync_state=config[CONF_SYNC_STATE],
     )
 
 
-class KNXSelect(KnxYamlEntity, SelectEntity, RestoreEntity):
-    """Representation of a KNX select."""
+class KNX2Select(KnxYamlEntity, SelectEntity, RestoreEntity):
+    """Representation of a KNX2 select."""
 
     _device: RawValue
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize a KNX select."""
+    def __init__(self, knx2_module: KNXModule, config: ConfigType) -> None:
+        """Initialize a KNX2 select."""
         super().__init__(
-            knx_module=knx_module,
-            device=_create_raw_value(knx_module.xknx, config),
+            knx2_module=knx2_module,
+            device=_create_raw_value(knx2_module.xknx, config),
         )
         self._option_payloads: dict[str, int] = {
             option[SelectSchema.CONF_OPTION]: option[CONF_PAYLOAD]

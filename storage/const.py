@@ -1,4 +1,4 @@
-"""Constants used in KNX config store."""
+"""Constants used in KNX2 config store."""
 
 from typing import Final
 

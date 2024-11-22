@@ -1,4 +1,4 @@
-"""Base class for KNX devices."""
+"""Base class for KNX2 devices."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from .storage.config_store import PlatformControllerBase
 from .storage.const import CONF_DEVICE_INFO
 
 if TYPE_CHECKING:
-    from . import KNXModule
+    from . import KNX2Module
 
 
 class KnxUiEntityPlatformController(PlatformControllerBase):
@@ -25,19 +25,19 @@ class KnxUiEntityPlatformController(PlatformControllerBase):
 
     def __init__(
         self,
-        knx_module: KNXModule,
+        knx2_module: KNX2Module,
         entity_platform: EntityPlatform,
         entity_class: type[KnxUiEntity],
     ) -> None:
         """Initialize the UI platform."""
-        self._knx_module = knx_module
+        self._knx2_module = knx2_module
         self._entity_platform = entity_platform
         self._entity_class = entity_class
 
     async def create_entity(self, unique_id: str, config: dict[str, Any]) -> None:
         """Add a new UI entity."""
         await self._entity_platform.async_add_entities(
-            [self._entity_class(self._knx_module, unique_id, config)]
+            [self._entity_class(self._knx2_module, unique_id, config)]
         )
 
     async def update_entity(
@@ -49,24 +49,24 @@ class KnxUiEntityPlatformController(PlatformControllerBase):
 
 
 class _KnxEntityBase(Entity):
-    """Representation of a KNX entity."""
+    """Representation of a KNX2 entity."""
 
     _attr_should_poll = False
-    _knx_module: KNXModule
+    _knx2_module: KNX2Module
     _device: XknxDevice
 
     @property
     def name(self) -> str:
-        """Return the name of the KNX device."""
+        """Return the name of the KNX2 device."""
         return self._device.name
 
     @property
     def available(self) -> bool:
         """Return True if entity is available."""
-        return self._knx_module.connected
+        return self._knx2_module.connected
 
     async def async_update(self) -> None:
-        """Request a state update from KNX bus."""
+        """Request a state update from KNX2 bus."""
         await self._device.sync()
 
     def after_update_callback(self, _device: XknxDevice) -> None:
@@ -78,7 +78,7 @@ class _KnxEntityBase(Entity):
         self._device.register_device_updated_cb(self.after_update_callback)
         self._device.xknx.devices.async_add(self._device)
         # super call needed to have methods of multi-inherited classes called
-        # eg. for restoring state (like _KNXSwitch)
+        # eg. for restoring state (like _KNX2Switch)
         await super().async_added_to_hass()
 
     async def async_will_remove_from_hass(self) -> None:
@@ -88,25 +88,25 @@ class _KnxEntityBase(Entity):
 
 
 class KnxYamlEntity(_KnxEntityBase):
-    """Representation of a KNX entity configured from YAML."""
+    """Representation of a KNX2 entity configured from YAML."""
 
-    def __init__(self, knx_module: KNXModule, device: XknxDevice) -> None:
+    def __init__(self, knx2_module: KNX2Module, device: XknxDevice) -> None:
         """Initialize the YAML entity."""
-        self._knx_module = knx_module
+        self._knx2_module = knx2_module
         self._device = device
 
 
 class KnxUiEntity(_KnxEntityBase):
-    """Representation of a KNX UI entity."""
+    """Representation of a KNX2 UI entity."""
 
     _attr_unique_id: str
     _attr_has_entity_name = True
 
     def __init__(
-        self, knx_module: KNXModule, unique_id: str, entity_config: dict[str, Any]
+        self, knx2_module: KNX2Module, unique_id: str, entity_config: dict[str, Any]
     ) -> None:
         """Initialize the UI entity."""
-        self._knx_module = knx_module
+        self._knx2_module = knx2_module
         self._attr_unique_id = unique_id
         if entity_category := entity_config.get(CONF_ENTITY_CATEGORY):
             self._attr_entity_category = EntityCategory(entity_category)

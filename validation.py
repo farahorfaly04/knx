@@ -1,4 +1,4 @@
-"""Validation helpers for KNX config schemas."""
+"""Validation helpers for KNX2 config schemas."""
 
 from collections.abc import Callable
 from enum import Enum
@@ -41,13 +41,13 @@ def ga_validator(value: Any) -> str | int:
     """Validate that value is parsable as GroupAddress or InternalGroupAddress."""
     if not isinstance(value, (str, int)):
         raise vol.Invalid(
-            f"'{value}' is not a valid KNX group address: Invalid type '{type(value).__name__}'"
+            f"'{value}' is not a valid KNX2 group address: Invalid type '{type(value).__name__}'"
         )
     try:
         parse_device_group_address(value)
     except CouldNotParseAddress as exc:
         raise vol.Invalid(
-            f"'{value}' is not a valid KNX group address: {exc.message}"
+            f"'{value}' is not a valid KNX2 group address: {exc.message}"
         ) from exc
     return value
 
@@ -77,7 +77,7 @@ ia_validator = vol.Any(
     vol.All(str, str.strip, cv.matches_regex(IndividualAddress.ADDRESS_RE.pattern)),
     vol.All(vol.Coerce(int), vol.Range(min=1, max=65535)),
     msg=(
-        "value does not match pattern for KNX individual address"
+        "value does not match pattern for KNX2 individual address"
         " '<area>.<line>.<device>' (eg.'1.1.100')"
     ),
 )

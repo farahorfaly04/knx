@@ -1,4 +1,4 @@
-"""Support for KNX/IP lights."""
+"""Support for KNX2/IP lights."""
 
 from __future__ import annotations
 
@@ -28,8 +28,8 @@ from homeassistant.helpers.entity_platform import (
 from homeassistant.helpers.typing import ConfigType
 import homeassistant.util.color as color_util
 
-from . import KNXModule
-from .const import CONF_SYNC_STATE, DOMAIN, KNX_ADDRESS, KNX_MODULE_KEY, ColorTempModes
+from . import KNX2Module
+from .const import CONF_SYNC_STATE, DOMAIN, KNX2_ADDRESS, KNX2_MODULE_KEY, ColorTempModes
 from .entity import KnxUiEntity, KnxUiEntityPlatformController, KnxYamlEntity
 from .schema import LightSchema
 from .storage.const import (
@@ -63,27 +63,27 @@ async def async_setup_entry(
     config_entry: config_entries.ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up light(s) for KNX platform."""
-    knx_module = hass.data[KNX_MODULE_KEY]
+    """Set up light(s) for KNX2 platform."""
+    knx2_module = hass.data[KNX2_MODULE_KEY]
     platform = async_get_current_platform()
-    knx_module.config_store.add_platform(
+    knx2_module.config_store.add_platform(
         platform=Platform.LIGHT,
         controller=KnxUiEntityPlatformController(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             entity_platform=platform,
             entity_class=KnxUiLight,
         ),
     )
 
     entities: list[KnxYamlEntity | KnxUiEntity] = []
-    if yaml_platform_config := knx_module.config_yaml.get(Platform.LIGHT):
+    if yaml_platform_config := knx2_module.config_yaml.get(Platform.LIGHT):
         entities.extend(
-            KnxYamlLight(knx_module, entity_config)
+            KnxYamlLight(knx2_module, entity_config)
             for entity_config in yaml_platform_config
         )
-    if ui_config := knx_module.config_store.data["entities"].get(Platform.LIGHT):
+    if ui_config := knx2_module.config_store.data["entities"].get(Platform.LIGHT):
         entities.extend(
-            KnxUiLight(knx_module, unique_id, config)
+            KnxUiLight(knx2_module, unique_id, config)
             for unique_id, config in ui_config.items()
         )
     if entities:
@@ -91,7 +91,7 @@ async def async_setup_entry(
 
 
 def _create_yaml_light(xknx: XKNX, config: ConfigType) -> XknxLight:
-    """Return a KNX Light device to be used within XKNX."""
+    """Return a KNX2 Light device to be used within XKNX."""
 
     def individual_color_addresses(color: str, feature: str) -> Any | None:
         """Load individual color address list from configuration structure."""
@@ -124,7 +124,7 @@ def _create_yaml_light(xknx: XKNX, config: ConfigType) -> XknxLight:
     return XknxLight(
         xknx,
         name=config[CONF_NAME],
-        group_address_switch=config.get(KNX_ADDRESS),
+        group_address_switch=config.get(KNX2_ADDRESS),
         group_address_switch_state=config.get(LightSchema.CONF_STATE_ADDRESS),
         group_address_brightness=config.get(LightSchema.CONF_BRIGHTNESS_ADDRESS),
         group_address_brightness_state=config.get(
@@ -147,7 +147,7 @@ def _create_yaml_light(xknx: XKNX, config: ConfigType) -> XknxLight:
         group_address_color_temperature=group_address_color_temp,
         group_address_color_temperature_state=group_address_color_temp_state,
         group_address_switch_red=individual_color_addresses(
-            LightSchema.CONF_RED, KNX_ADDRESS
+            LightSchema.CONF_RED, KNX2_ADDRESS
         ),
         group_address_switch_red_state=individual_color_addresses(
             LightSchema.CONF_RED, LightSchema.CONF_STATE_ADDRESS
@@ -159,7 +159,7 @@ def _create_yaml_light(xknx: XKNX, config: ConfigType) -> XknxLight:
             LightSchema.CONF_RED, LightSchema.CONF_BRIGHTNESS_STATE_ADDRESS
         ),
         group_address_switch_green=individual_color_addresses(
-            LightSchema.CONF_GREEN, KNX_ADDRESS
+            LightSchema.CONF_GREEN, KNX2_ADDRESS
         ),
         group_address_switch_green_state=individual_color_addresses(
             LightSchema.CONF_GREEN, LightSchema.CONF_STATE_ADDRESS
@@ -171,7 +171,7 @@ def _create_yaml_light(xknx: XKNX, config: ConfigType) -> XknxLight:
             LightSchema.CONF_GREEN, LightSchema.CONF_BRIGHTNESS_STATE_ADDRESS
         ),
         group_address_switch_blue=individual_color_addresses(
-            LightSchema.CONF_BLUE, KNX_ADDRESS
+            LightSchema.CONF_BLUE, KNX2_ADDRESS
         ),
         group_address_switch_blue_state=individual_color_addresses(
             LightSchema.CONF_BLUE, LightSchema.CONF_STATE_ADDRESS
@@ -183,7 +183,7 @@ def _create_yaml_light(xknx: XKNX, config: ConfigType) -> XknxLight:
             LightSchema.CONF_BLUE, LightSchema.CONF_BRIGHTNESS_STATE_ADDRESS
         ),
         group_address_switch_white=individual_color_addresses(
-            LightSchema.CONF_WHITE, KNX_ADDRESS
+            LightSchema.CONF_WHITE, KNX2_ADDRESS
         ),
         group_address_switch_white_state=individual_color_addresses(
             LightSchema.CONF_WHITE, LightSchema.CONF_STATE_ADDRESS
@@ -200,31 +200,31 @@ def _create_yaml_light(xknx: XKNX, config: ConfigType) -> XknxLight:
     )
 
 
-def _create_ui_light(xknx: XKNX, knx_config: ConfigType, name: str) -> XknxLight:
-    """Return a KNX Light device to be used within XKNX."""
+def _create_ui_light(xknx: XKNX, knx2_config: ConfigType, name: str) -> XknxLight:
+    """Return a KNX2 Light device to be used within XKNX."""
 
     def get_write(key: str) -> str | None:
         """Get the write group address."""
-        return knx_config[key][CONF_GA_WRITE] if key in knx_config else None
+        return knx2_config[key][CONF_GA_WRITE] if key in knx2_config else None
 
     def get_state(key: str) -> list[Any] | None:
         """Get the state group address."""
         return (
-            [knx_config[key][CONF_GA_STATE], *knx_config[key][CONF_GA_PASSIVE]]
-            if key in knx_config
+            [knx2_config[key][CONF_GA_STATE], *knx2_config[key][CONF_GA_PASSIVE]]
+            if key in knx2_config
             else None
         )
 
     def get_dpt(key: str) -> str | None:
         """Get the DPT."""
-        return knx_config[key].get(CONF_DPT) if key in knx_config else None
+        return knx2_config[key].get(CONF_DPT) if key in knx2_config else None
 
     group_address_tunable_white = None
     group_address_tunable_white_state = None
     group_address_color_temp = None
     group_address_color_temp_state = None
     color_temperature_type = ColorTemperatureType.UINT_2_BYTE
-    if ga_color_temp := knx_config.get(CONF_GA_COLOR_TEMP):
+    if ga_color_temp := knx2_config.get(CONF_GA_COLOR_TEMP):
         if ga_color_temp[CONF_DPT] == ColorTempModes.RELATIVE.value:
             group_address_tunable_white = ga_color_temp[CONF_GA_WRITE]
             group_address_tunable_white_state = [
@@ -292,14 +292,14 @@ def _create_ui_light(xknx: XKNX, knx_config: ConfigType, name: str) -> XknxLight
         group_address_brightness_white=get_write(CONF_GA_WHITE_BRIGHTNESS),
         group_address_brightness_white_state=get_state(CONF_GA_WHITE_BRIGHTNESS),
         color_temperature_type=color_temperature_type,
-        min_kelvin=knx_config[CONF_COLOR_TEMP_MIN],
-        max_kelvin=knx_config[CONF_COLOR_TEMP_MAX],
-        sync_state=knx_config[CONF_SYNC_STATE],
+        min_kelvin=knx2_config[CONF_COLOR_TEMP_MIN],
+        max_kelvin=knx2_config[CONF_COLOR_TEMP_MAX],
+        sync_state=knx2_config[CONF_SYNC_STATE],
     )
 
 
 class _KnxLight(LightEntity):
-    """Representation of a KNX light."""
+    """Representation of a KNX2 light."""
 
     _attr_max_color_temp_kelvin: int
     _attr_min_color_temp_kelvin: int
@@ -358,7 +358,7 @@ class _KnxLight(LightEntity):
     @property
     def hs_color(self) -> tuple[float, float] | None:
         """Return the hue and saturation color value [float, float]."""
-        # Hue is scaled 0..360 int encoded in 1 byte in KNX (-> only 256 possible values)
+        # Hue is scaled 0..360 int encoded in 1 byte in KNX2 (-> only 256 possible values)
         # Saturation is scaled 0..100 int
         return self._device.current_hs_color
 
@@ -449,7 +449,7 @@ class _KnxLight(LightEntity):
         ) -> None:
             """Set color of light. Normalize colors for brightness when not writable."""
             if self._device.brightness.writable:
-                # let the KNX light controller handle brightness
+                # let the KNX2 light controller handle brightness
                 await self._device.set_color(rgb, white)
                 if brightness:
                     await self._device.set_brightness(brightness)
@@ -532,15 +532,15 @@ class _KnxLight(LightEntity):
 
 
 class KnxYamlLight(_KnxLight, KnxYamlEntity):
-    """Representation of a KNX light."""
+    """Representation of a KNX2 light."""
 
     _device: XknxLight
 
-    def __init__(self, knx_module: KNXModule, config: ConfigType) -> None:
-        """Initialize of KNX light."""
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
+        """Initialize of KNX2 light."""
         super().__init__(
-            knx_module=knx_module,
-            device=_create_yaml_light(knx_module.xknx, config),
+            knx2_module=knx2_module,
+            device=_create_yaml_light(knx2_module.xknx, config),
         )
         self._attr_color_mode = next(iter(self.supported_color_modes))
         self._attr_max_color_temp_kelvin: int = config[LightSchema.CONF_MAX_KELVIN]
@@ -560,21 +560,21 @@ class KnxYamlLight(_KnxLight, KnxYamlEntity):
 
 
 class KnxUiLight(_KnxLight, KnxUiEntity):
-    """Representation of a KNX light."""
+    """Representation of a KNX2 light."""
 
     _device: XknxLight
 
     def __init__(
-        self, knx_module: KNXModule, unique_id: str, config: ConfigType
+        self, knx2_module: KNX2Module, unique_id: str, config: ConfigType
     ) -> None:
-        """Initialize of KNX light."""
+        """Initialize of KNX2 light."""
         super().__init__(
-            knx_module=knx_module,
+            knx2_module=knx2_module,
             unique_id=unique_id,
             entity_config=config[CONF_ENTITY],
         )
         self._device = _create_ui_light(
-            knx_module.xknx, config[DOMAIN], config[CONF_ENTITY][CONF_NAME]
+            knx2_module.xknx, config[DOMAIN], config[CONF_ENTITY][CONF_NAME]
         )
         self._attr_color_mode = next(iter(self.supported_color_modes))
         self._attr_max_color_temp_kelvin: int = config[DOMAIN][CONF_COLOR_TEMP_MAX]

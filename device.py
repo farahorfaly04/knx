@@ -1,4 +1,4 @@
-"""Handle KNX Devices."""
+"""Handle KNX2 Devices."""
 
 from __future__ import annotations
 
@@ -14,8 +14,8 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from .const import DOMAIN
 
 
-class KNXInterfaceDevice:
-    """Class for KNX Interface Device handling."""
+class KNX2InterfaceDevice:
+    """Class for KNX2 Interface Device handling."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, xknx: XKNX) -> None:
         """Initialize interface device class."""
@@ -27,7 +27,7 @@ class KNXInterfaceDevice:
         _device_id = (DOMAIN, f"_{entry.entry_id}_interface")
         self.device = self.device_registry.async_get_or_create(
             config_entry_id=entry.entry_id,
-            name="KNX Interface",
+            name="KNX2 Interface",
             identifiers={_device_id},
         )
         self.device_info = DeviceInfo(identifiers={_device_id})
@@ -38,7 +38,7 @@ class KNXInterfaceDevice:
 
     async def update(self) -> None:
         """Update interface properties on new connection."""
-        self.gateway_descriptor = await self.xknx.knxip_interface.gateway_info()
+        self.gateway_descriptor = await self.xknx.knx2ip_interface.gateway_info()
 
         self.device_registry.async_update_device(
             device_id=self.device.id,
@@ -48,6 +48,6 @@ class KNXInterfaceDevice:
         )
 
     def connection_state_changed_cb(self, state: XknxConnectionState) -> None:
-        """Call invoked after a KNX connection state change was received."""
+        """Call invoked after a KNX2 connection state change was received."""
         if state is XknxConnectionState.CONNECTED:
             self.hass.async_create_task(self.update())

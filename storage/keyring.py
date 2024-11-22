@@ -1,4 +1,4 @@
-"""KNX Keyring handler."""
+"""KNX2 Keyring handler."""
 
 import logging
 from pathlib import Path
@@ -17,10 +17,10 @@ from ..const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
-DEFAULT_KNX_KEYRING_FILENAME: Final = "keyring.knxkeys"
+DEFAULT_KNX2_KEYRING_FILENAME: Final = "keyring.knx2keys"
 
 
-async def save_uploaded_knxkeys_file(
+async def save_uploaded_knx2keys_file(
     hass: HomeAssistant, uploaded_file_id: str, password: str
 ) -> Keyring:
     """Validate the uploaded file and move it to the storage directory.
@@ -41,7 +41,7 @@ async def save_uploaded_knxkeys_file(
                 raise
             dest_path = Path(hass.config.path(STORAGE_DIR, DOMAIN))
             dest_path.mkdir(exist_ok=True)
-            dest_file = dest_path / DEFAULT_KNX_KEYRING_FILENAME
+            dest_file = dest_path / DEFAULT_KNX2_KEYRING_FILENAME
             shutil.move(file_path, dest_file)
         return keyring
 
