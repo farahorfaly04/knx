@@ -34,7 +34,7 @@ from .const import (
     KNX_ADDRESS,
     KNX_MODULE_KEY,
 )
-from .entity import KnxUiEntity, KnxUiEntityPlatformController, KnxYamlEntity
+from .entity import Knx2UiEntity, Knx2UiEntityPlatformController, Knx2YamlEntity
 from .schema import SwitchSchema
 from .storage.const import (
     CONF_ENTITY,
@@ -51,33 +51,33 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up switch(es) for KNX platform."""
-    knx2_module = hass.data[KNX_MODULE_KEY]
+    knx2_module = hass.data[KNX2_MODULE_KEY]
     platform = async_get_current_platform()
     knx2_module.config_store.add_platform(
         platform=Platform.SWITCH,
-        controller=KnxUiEntityPlatformController(
+        controller=Knx2UiEntityPlatformController(
             knx2_module=knx2_module,
             entity_platform=platform,
-            entity_class=KnxUiSwitch,
+            entity_class=Knx2UiSwitch,
         ),
     )
 
-    entities: list[KnxYamlEntity | KnxUiEntity] = []
+    entities: list[Knx2YamlEntity | Knx2UiEntity] = []
     if yaml_platform_config := knx2_module.config_yaml.get(Platform.SWITCH):
         entities.extend(
-            KnxYamlSwitch(knx2_module, entity_config)
+            Knx2YamlSwitch(knx2_module, entity_config)
             for entity_config in yaml_platform_config
         )
     if ui_config := knx2_module.config_store.data["entities"].get(Platform.SWITCH):
         entities.extend(
-            KnxUiSwitch(knx2_module, unique_id, config)
+            Knx2UiSwitch(knx2_module, unique_id, config)
             for unique_id, config in ui_config.items()
         )
     if entities:
         async_add_entities(entities)
 
 
-class _KnxSwitch(SwitchEntity, RestoreEntity):
+class _Knx2Switch(SwitchEntity, RestoreEntity):
     """Base class for a KNX switch."""
 
     _device: XknxSwitch
@@ -105,7 +105,7 @@ class _KnxSwitch(SwitchEntity, RestoreEntity):
         await self._device.set_off()
 
 
-class KnxYamlSwitch(_KnxSwitch, KnxYamlEntity):
+class Knx2YamlSwitch(_Knx2Switch, Knx2YamlEntity):
     """Representation of a KNX switch configured from YAML."""
 
     _device: XknxSwitch
@@ -128,7 +128,7 @@ class KnxYamlSwitch(_KnxSwitch, KnxYamlEntity):
         self._attr_unique_id = str(self._device.switch.group_address)
 
 
-class KnxUiSwitch(_KnxSwitch, KnxUiEntity):
+class Knx2UiSwitch(_Knx2Switch, Knx2UiEntity):
     """Representation of a KNX switch configured from UI."""
 
     _device: XknxSwitch

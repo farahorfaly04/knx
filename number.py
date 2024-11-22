@@ -24,7 +24,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import KNX2Module
 from .const import CONF_RESPOND_TO_READ, CONF_STATE_ADDRESS, KNX2_ADDRESS, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 from .schema import NumberSchema
 
 
@@ -52,7 +52,7 @@ def _create_numeric_value(xknx: XKNX, config: ConfigType) -> NumericValue:
     )
 
 
-class KNX2Number(KnxYamlEntity, RestoreNumber):
+class KNX2Number(Knx2YamlEntity, RestoreNumber):
     """Representation of a KNX2 number."""
 
     _device: NumericValue

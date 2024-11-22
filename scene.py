@@ -15,7 +15,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import KNX2Module
 from .const import KNX2_ADDRESS, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 from .schema import SceneSchema
 
 
@@ -31,7 +31,7 @@ async def async_setup_entry(
     async_add_entities(KNX2Scene(knx2_module, entity_config) for entity_config in config)
 
 
-class KNX2Scene(KnxYamlEntity, Scene):
+class KNX2Scene(Knx2YamlEntity, Scene):
     """Representation of a KNX2 scene."""
 
     _device: XknxScene

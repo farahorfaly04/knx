@@ -19,16 +19,16 @@ _LOGGER = logging.getLogger(__name__)
 STORAGE_VERSION: Final = 1
 STORAGE_KEY: Final = f"{DOMAIN}/config_store.json"
 
-type KNXPlatformStoreModel = dict[str, dict[str, Any]]  # unique_id: configuration
-type KNXEntityStoreModel = dict[
-    str, KNXPlatformStoreModel
+type KNX2PlatformStoreModel = dict[str, dict[str, Any]]  # unique_id: configuration
+type KNX2EntityStoreModel = dict[
+    str, KNX2PlatformStoreModel
 ]  # platform: KNXPlatformStoreModel
 
 
-class KNXConfigStoreModel(TypedDict):
+class KNX2ConfigStoreModel(TypedDict):
     """Represent KNX configuration store data."""
 
-    entities: KNXEntityStoreModel
+    entities: KNX2EntityStoreModel
 
 
 class PlatformControllerBase(ABC):

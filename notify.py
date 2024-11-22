@@ -14,7 +14,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import KNX2Module
 from .const import KNX2_ADDRESS, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 
 
 async def async_setup_entry(
@@ -39,7 +39,7 @@ def _create_notification_instance(xknx: XKNX, config: ConfigType) -> XknxNotific
     )
 
 
-class KNX2Notify(KnxYamlEntity, NotifyEntity):
+class KNX2Notify(Knx2YamlEntity, NotifyEntity):
     """Representation of a KNX2 notification entity."""
 
     _device: XknxNotification

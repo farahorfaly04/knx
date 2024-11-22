@@ -30,7 +30,7 @@ from .const import (
     KNX2_ADDRESS,
     KNX2_MODULE_KEY,
 )
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 
 
 async def async_setup_entry(
@@ -60,7 +60,7 @@ def _create_xknx_device(xknx: XKNX, config: ConfigType) -> XknxTimeDevice:
     )
 
 
-class KNX2TimeEntity(KnxYamlEntity, TimeEntity, RestoreEntity):
+class KNX2TimeEntity(Knx2YamlEntity, TimeEntity, RestoreEntity):
     """Representation of a KNX2 time."""
 
     _device: XknxTimeDevice

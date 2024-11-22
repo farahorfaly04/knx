@@ -21,7 +21,7 @@ from homeassistant.util.scaling import int_states_in_range
 
 from . import KNX2Module
 from .const import KNX2_ADDRESS, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 from .schema import FanSchema
 
 DEFAULT_PERCENTAGE: Final = 50
@@ -39,7 +39,7 @@ async def async_setup_entry(
     async_add_entities(KNX2Fan(knx2_module, entity_config) for entity_config in config)
 
 
-class KNX2Fan(KnxYamlEntity, FanEntity):
+class KNX2Fan(Knx2YamlEntity, FanEntity):
     """Representation of a KNX2 fan."""
 
     _device: XknxFan

@@ -24,7 +24,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import KNX2Module
 from .const import ATTR_COUNTER, ATTR_SOURCE, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 from .schema import BinarySensorSchema
 
 
@@ -42,7 +42,7 @@ async def async_setup_entry(
     )
 
 
-class KNX2BinarySensor(KnxYamlEntity, BinarySensorEntity, RestoreEntity):
+class KNX2BinarySensor(Knx2YamlEntity, BinarySensorEntity, RestoreEntity):
     """Representation of a KNX2 binary sensor."""
 
     _device: XknxBinarySensor

@@ -63,27 +63,27 @@ async def register_panel(hass: HomeAssistant) -> None:
             [
                 StaticPathConfig(
                     URL_BASE,
-                    path=knx2_panel.locate_dir(),
-                    cache_headers=knx2_panel.is_prod_build,
+                    path=knx_panel.locate_dir(),
+                    cache_headers=knx_panel.is_prod_build,
                 )
             ]
         )
         await panel_custom.async_register_panel(
             hass=hass,
             frontend_url_path=DOMAIN,
-            webcomponent_name=knx2_panel.webcomponent_name,
+            webcomponent_name=knx_panel.webcomponent_name,
             sidebar_title=DOMAIN.upper(),
             sidebar_icon="mdi:bus-electric",
-            module_url=f"{URL_BASE}/{knx2_panel.entrypoint_js}",
+            module_url=f"{URL_BASE}/{knx_panel.entrypoint_js}",
             embed_iframe=True,
             require_admin=True,
         )
 
 
-type KnxWebSocketCommandHandler = Callable[
+type Knx2WebSocketCommandHandler = Callable[
     [HomeAssistant, KNX2Module, websocket_api.ActiveConnection, dict[str, Any]], None
 ]
-type KnxAsyncWebSocketCommandHandler = Callable[
+type Knx2AsyncWebSocketCommandHandler = Callable[
     [HomeAssistant, KNX2Module, websocket_api.ActiveConnection, dict[str, Any]],
     Awaitable[None],
 ]
@@ -91,16 +91,16 @@ type KnxAsyncWebSocketCommandHandler = Callable[
 
 @overload
 def provide_knx2(
-    func: KnxAsyncWebSocketCommandHandler,
+    func: Knx2AsyncWebSocketCommandHandler,
 ) -> websocket_api.const.AsyncWebSocketCommandHandler: ...
 @overload
 def provide_knx2(
-    func: KnxWebSocketCommandHandler,
+    func: Knx2WebSocketCommandHandler,
 ) -> websocket_api.const.WebSocketCommandHandler: ...
 
 
 def provide_knx2(
-    func: KnxAsyncWebSocketCommandHandler | KnxWebSocketCommandHandler,
+    func: Knx2AsyncWebSocketCommandHandler | Knx2WebSocketCommandHandler,
 ) -> (
     websocket_api.const.AsyncWebSocketCommandHandler
     | websocket_api.const.WebSocketCommandHandler

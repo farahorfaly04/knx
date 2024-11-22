@@ -553,7 +553,7 @@ class KNX2CommonFlow(ABC, ConfigEntryBaseFlow):
             selected_tunnel_ia: str | None = None
             _if_user_id: int | None = None
             if user_input[CONF_KNX2_TUNNEL_ENDPOINT_IA] == CONF_KNX2_AUTOMATIC:
-                self.new_entry_data |= KNXConfigEntryData(
+                self.new_entry_data |= KNX2ConfigEntryData(
                     tunnel_endpoint_ia=None,
                 )
             else:

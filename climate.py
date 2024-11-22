@@ -37,7 +37,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import KNX2Module
 from .const import CONTROLLER_MODES, CURRENT_HVAC_ACTIONS, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 from .schema import ClimateSchema
 
 ATTR_COMMAND_VALUE = "command_value"
@@ -142,7 +142,7 @@ def _create_climate(xknx: XKNX, config: ConfigType) -> XknxClimate:
     )
 
 
-class KNX2Climate(KnxYamlEntity, ClimateEntity):
+class KNX2Climate(Knx2YamlEntity, ClimateEntity):
     """Representation of a KNX2 climate device."""
 
     _device: XknxClimate

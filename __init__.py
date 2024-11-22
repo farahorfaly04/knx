@@ -90,7 +90,7 @@ from .schema import (
     TimeSchema,
     WeatherSchema,
 )
-from .services import register_knx_services
+from .services import register_knx2_services
 from .storage.config_store import KNX2ConfigStore
 from .telegrams import STORAGE_KEY as TELEGRAMS_STORAGE_KEY, Telegrams
 from .websocket import register_panel

@@ -35,7 +35,7 @@ from homeassistant.util.enum import try_parse_enum
 
 from . import KNX2Module
 from .const import ATTR_SOURCE, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 from .schema import SensorSchema
 
 SCAN_INTERVAL = timedelta(seconds=10)
@@ -141,7 +141,7 @@ def _create_sensor(xknx: XKNX, config: ConfigType) -> XknxSensor:
     )
 
 
-class KNX2Sensor(KnxYamlEntity, SensorEntity):
+class KNX2Sensor(Knx2YamlEntity, SensorEntity):
     """Representation of a KNX2 sensor."""
 
     _device: XknxSensor

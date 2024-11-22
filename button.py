@@ -13,7 +13,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import KNX2Module
 from .const import CONF_PAYLOAD_LENGTH, KNX2_ADDRESS, KNX2_MODULE_KEY
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 
 
 async def async_setup_entry(
@@ -28,7 +28,7 @@ async def async_setup_entry(
     async_add_entities(KNX2Button(knx2_module, entity_config) for entity_config in config)
 
 
-class KNX2Button(KnxYamlEntity, ButtonEntity):
+class KNX2Button(Knx2YamlEntity, ButtonEntity):
     """Representation of a KNX2 button."""
 
     _device: XknxRawValue

@@ -29,7 +29,7 @@ from .const import (
     KNX2_ADDRESS,
     KNX2_MODULE_KEY,
 )
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 from .schema import SelectSchema
 
 
@@ -58,12 +58,12 @@ def _create_raw_value(xknx: XKNX, config: ConfigType) -> RawValue:
     )
 
 
-class KNX2Select(KnxYamlEntity, SelectEntity, RestoreEntity):
+class KNX2Select(Knx2YamlEntity, SelectEntity, RestoreEntity):
     """Representation of a KNX2 select."""
 
     _device: RawValue
 
-    def __init__(self, knx2_module: KNXModule, config: ConfigType) -> None:
+    def __init__(self, knx2_module: KNX2Module, config: ConfigType) -> None:
         """Initialize a KNX2 select."""
         super().__init__(
             knx2_module=knx2_module,

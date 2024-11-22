@@ -20,14 +20,14 @@ if TYPE_CHECKING:
     from . import KNX2Module
 
 
-class KnxUiEntityPlatformController(PlatformControllerBase):
+class Knx2UiEntityPlatformController(PlatformControllerBase):
     """Class to manage dynamic adding and reloading of UI entities."""
 
     def __init__(
         self,
         knx2_module: KNX2Module,
         entity_platform: EntityPlatform,
-        entity_class: type[KnxUiEntity],
+        entity_class: type[Knx2UiEntity],
     ) -> None:
         """Initialize the UI platform."""
         self._knx2_module = knx2_module
@@ -48,7 +48,7 @@ class KnxUiEntityPlatformController(PlatformControllerBase):
         await self.create_entity(unique_id=entity_entry.unique_id, config=config)
 
 
-class _KnxEntityBase(Entity):
+class _Knx2EntityBase(Entity):
     """Representation of a KNX2 entity."""
 
     _attr_should_poll = False
@@ -87,7 +87,7 @@ class _KnxEntityBase(Entity):
         self._device.xknx.devices.async_remove(self._device)
 
 
-class KnxYamlEntity(_KnxEntityBase):
+class Knx2YamlEntity(_Knx2EntityBase):
     """Representation of a KNX2 entity configured from YAML."""
 
     def __init__(self, knx2_module: KNX2Module, device: XknxDevice) -> None:
@@ -96,7 +96,7 @@ class KnxYamlEntity(_KnxEntityBase):
         self._device = device
 
 
-class KnxUiEntity(_KnxEntityBase):
+class Knx2UiEntity(_Knx2EntityBase):
     """Representation of a KNX2 UI entity."""
 
     _attr_unique_id: str

@@ -31,7 +31,7 @@ from .const import (
     KNX2_ADDRESS,
     KNX2_MODULE_KEY,
 )
-from .entity import KnxYamlEntity
+from .entity import Knx2YamlEntity
 
 
 async def async_setup_entry(
@@ -61,7 +61,7 @@ def _create_xknx_device(xknx: XKNX, config: ConfigType) -> XknxDateTimeDevice:
     )
 
 
-class KNX2DateTimeEntity(KnxYamlEntity, DateTimeEntity, RestoreEntity):
+class KNX2DateTimeEntity(Knx2YamlEntity, DateTimeEntity, RestoreEntity):
     """Representation of a KNX2 datetime."""
 
     _device: XknxDateTimeDevice

@@ -30,7 +30,7 @@ import homeassistant.util.color as color_util
 
 from . import KNX2Module
 from .const import CONF_SYNC_STATE, DOMAIN, KNX2_ADDRESS, KNX2_MODULE_KEY, ColorTempModes
-from .entity import KnxUiEntity, KnxUiEntityPlatformController, KnxYamlEntity
+from .entity import Knx2UiEntity, Knx2UiEntityPlatformController, Knx2YamlEntity
 from .schema import LightSchema
 from .storage.const import (
     CONF_COLOR_TEMP_MAX,
@@ -68,22 +68,22 @@ async def async_setup_entry(
     platform = async_get_current_platform()
     knx2_module.config_store.add_platform(
         platform=Platform.LIGHT,
-        controller=KnxUiEntityPlatformController(
+        controller=Knx2UiEntityPlatformController(
             knx2_module=knx2_module,
             entity_platform=platform,
-            entity_class=KnxUiLight,
+            entity_class=Knx2UiLight,
         ),
     )
 
-    entities: list[KnxYamlEntity | KnxUiEntity] = []
+    entities: list[Knx2YamlEntity | Knx2UiEntity] = []
     if yaml_platform_config := knx2_module.config_yaml.get(Platform.LIGHT):
         entities.extend(
-            KnxYamlLight(knx2_module, entity_config)
+            Knx2YamlLight(knx2_module, entity_config)
             for entity_config in yaml_platform_config
         )
     if ui_config := knx2_module.config_store.data["entities"].get(Platform.LIGHT):
         entities.extend(
-            KnxUiLight(knx2_module, unique_id, config)
+            Knx2UiLight(knx2_module, unique_id, config)
             for unique_id, config in ui_config.items()
         )
     if entities:
@@ -298,7 +298,7 @@ def _create_ui_light(xknx: XKNX, knx2_config: ConfigType, name: str) -> XknxLigh
     )
 
 
-class _KnxLight(LightEntity):
+class _Knx2Light(LightEntity):
     """Representation of a KNX2 light."""
 
     _attr_max_color_temp_kelvin: int
@@ -531,7 +531,7 @@ class _KnxLight(LightEntity):
         await self._device.set_off()
 
 
-class KnxYamlLight(_KnxLight, KnxYamlEntity):
+class Knx2YamlLight(_Knx2Light, Knx2YamlEntity):
     """Representation of a KNX2 light."""
 
     _device: XknxLight
@@ -559,7 +559,7 @@ class KnxYamlLight(_KnxLight, KnxYamlEntity):
         )
 
 
-class KnxUiLight(_KnxLight, KnxUiEntity):
+class Knx2UiLight(_Knx2Light, Knx2UiEntity):
     """Representation of a KNX2 light."""
 
     _device: XknxLight
