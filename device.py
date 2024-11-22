@@ -38,7 +38,7 @@ class KNX2InterfaceDevice:
 
     async def update(self) -> None:
         """Update interface properties on new connection."""
-        self.gateway_descriptor = await self.xknx.knx2ip_interface.gateway_info()
+        self.gateway_descriptor = await self.xknx.knxip_interface.gateway_info()
 
         self.device_registry.async_update_device(
             device_id=self.device.id,
