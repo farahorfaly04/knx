@@ -13,6 +13,7 @@ from xknx.devices import (
 
 #from xknx.devices.fan import FanSpeedMode
 from xknx.devices import fan
+print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 print(dir(fan))
 from xknx.dpt.dpt_20 import HVACControllerMode, HVACOperationMode
 
