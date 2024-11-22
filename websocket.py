@@ -38,7 +38,7 @@ from .telegrams import SIGNAL_KNX2_TELEGRAM, TelegramDict
 if TYPE_CHECKING:
     from . import KNX2Module
 
-URL_BASE: Final = "/knx2_static"
+URL_BASE: Final = "/knx_static"
 
 
 async def register_panel(hass: HomeAssistant) -> None:
