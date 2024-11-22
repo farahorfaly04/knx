@@ -31,8 +31,8 @@ from .const import (
     CONF_RESPOND_TO_READ,
     CONF_SYNC_STATE,
     DOMAIN,
-    KNX_ADDRESS,
-    KNX_MODULE_KEY,
+    KNX2_ADDRESS,
+    KNX2_MODULE_KEY,
 )
 from .entity import Knx2UiEntity, Knx2UiEntityPlatformController, Knx2YamlEntity
 from .schema import SwitchSchema
@@ -117,7 +117,7 @@ class Knx2YamlSwitch(_Knx2Switch, Knx2YamlEntity):
             device=XknxSwitch(
                 xknx=knx2_module.xknx,
                 name=config[CONF_NAME],
-                group_address=config[KNX_ADDRESS],
+                group_address=config[KNX2_ADDRESS],
                 group_address_state=config.get(SwitchSchema.CONF_STATE_ADDRESS),
                 respond_to_read=config[CONF_RESPOND_TO_READ],
                 invert=config[SwitchSchema.CONF_INVERT],
